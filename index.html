@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -159,7 +160,7 @@
   <button id="botonAdmin" onclick="alternarAdmin()">⚙️</button>
 
   <script>
-    let productos = [
+    let productos = JSON.parse(localStorage.getItem('productos')) || [
       {
         id: 1,
         nombre: "Desayuno Romántico",
@@ -275,6 +276,7 @@
             stock: Number(stock)
           };
           productos.push(nuevoProducto);
+          localStorage.setItem('productos', JSON.stringify(productos));
           mostrarProductos();
           alert("Producto agregado exitosamente");
         };
