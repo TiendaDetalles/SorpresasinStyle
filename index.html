@@ -85,12 +85,7 @@
       cursor: pointer;
     }
 
-    #admin-panel {
-      display: none; /* Ocultar por defecto */
-      padding: 20px;
-    }
-
-    /* Estilos para el modal */
+    /* Estilos para los modales */
     .modal {
       display: none;
       position: fixed;
@@ -100,7 +95,6 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgb(0,0,0);
       background-color: rgba(0,0,0,0.4);
       padding-top: 60px;
     }
@@ -110,8 +104,8 @@
       margin: 5% auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 50%; /* Reduce el tamaño del modal */
-      max-width: 400px; /* Limita el ancho máximo */
+      width: 50%;
+      max-width: 400px;
     }
 
     .close {
@@ -126,6 +120,17 @@
       color: black;
       text-decoration: none;
       cursor: pointer;
+    }
+
+    .admin-button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #ffb6c1;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -147,10 +152,36 @@
       <p>Total: $<span id="total">0</span></p>
       <button onclick="comprar()">Finalizar Compra</button>
     </section>
+  </main>
 
-    <section id="admin-panel">
+  <button id="botonAdmin" onclick="openAdminModal()">⚙️</button>
+
+  <!-- Modal Principal de Administración -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('adminModal')">&times;</span>
       <h2>Panel de Administración</h2>
+      <button class="admin-button" onclick="openModal('logoModal')">Cambiar Logo</button>
+      <button class="admin-button" onclick="openModal('productosModal')">Gestionar Productos</button>
+      <button class="admin-button" onclick="closeModal('adminModal')">Cerrar</button>
+    </div>
+  </div>
 
+  <!-- Modal para Cambiar Logo -->
+  <div id="logoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('logoModal')">&times;</span>
+      <h3>Actualizar Logo</h3>
+      <input type="file" id="logo-input" accept="image/*">
+      <button onclick="guardarLogo()">Guardar Logo</button>
+      <button class="admin-button" onclick="openModal('adminModal')">Volver</button>
+    </div>
+  </div>
+
+  <!-- Modal para Gestionar Productos -->
+  <div id="productosModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('productosModal')">&times;</span>
       <h3>Agregar Nuevo Producto</h3>
       <form onsubmit="agregarProducto(event)">
         <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
@@ -159,22 +190,16 @@
         <input type="file" id="imagen" accept="image/*" required><br>
         <button type="submit">Agregar</button>
       </form>
-
-      <h3>Actualizar Logo</h3>
-      <input type="file" id="logo-input" accept="image/*">
-      <button onclick="guardarLogo()">Guardar Logo</button>
-
       <h3>Modificar o Eliminar Productos</h3>
       <ul id="lista-productos-admin"></ul>
-    </section>
-  </main>
+      <button class="admin-button" onclick="openModal('adminModal')">Volver</button>
+    </div>
+  </div>
 
-  <button id="botonAdmin" onclick="alternarAdmin()">⚙️</button>
-
-  <!-- Modal -->
+  <!-- Modal para Detalles del Producto -->
   <div id="productModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
+      <span class="close" onclick="closeModal('productModal')">&times;</span>
       <img id="modal-image" src="" alt="Imagen del producto" style="width: 100%; height: auto;">
       <h2 id="modal-name"></h2>
       <p id="modal-price"></p>
@@ -216,10 +241,7 @@
     document.addEventListener("keydown", function(event) {
       claveSecreta += event.key;
       if (claveSecreta.includes(claveCorrecta)) {
-        const boton = document.getElementById("botonAdmin");
-        const panel = document.getElementById("admin-panel");
-        boton.style.display = boton.style.display === "none" ? "block" : "none";
-        panel.style.display = panel.style.display === "none" ? "block" : "none";
+        openAdminModal();
         claveSecreta = "";
       }
       if (claveSecreta.length > 10) claveSecreta = "";
@@ -247,11 +269,19 @@
       document.getElementById('modal-name').textContent = producto.nombre;
       document.getElementById('modal-price').textContent = `Precio: $${producto.precio}`;
       document.getElementById('modal-description').textContent = producto.descripcion;
-      document.getElementById('productModal').style.display = "block";
+      openModal('productModal');
     }
 
-    function closeModal() {
-      document.getElementById('productModal').style.display = "none";
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = "block";
+    }
+
+    function openAdminModal() {
+      openModal('adminModal');
     }
 
     function mostrarProductosAdmin() {
@@ -294,11 +324,6 @@
       alert("Gracias por tu compra!");
       carrito = [];
       actualizarCarrito();
-    }
-
-    function alternarAdmin() {
-      const panel = document.getElementById("admin-panel");
-      panel.style.display = panel.style.display === "none" ? "block" : "none";
     }
 
     function agregarProducto(e) {
