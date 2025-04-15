@@ -183,7 +183,7 @@
   </div>
 
   <script>
-    let productos = [
+    let productos = JSON.parse(localStorage.getItem('productos')) || [
       {
         id: 1,
         nombre: "Desayuno Romántico",
@@ -320,6 +320,7 @@
             descripcion
           };
           productos.push(nuevoProducto);
+          localStorage.setItem('productos', JSON.stringify(productos));
           mostrarProductos();
           mostrarProductosAdmin();
           alert("Producto agregado exitosamente");
@@ -338,6 +339,7 @@
         productos[index].nombre = nuevoNombre;
         productos[index].precio = Number(nuevoPrecio);
         productos[index].descripcion = nuevaDescripcion;
+        localStorage.setItem('productos', JSON.stringify(productos));
         mostrarProductos();
         mostrarProductosAdmin();
       }
@@ -347,6 +349,7 @@
       const confirmacion = confirm("¿Está seguro de que desea eliminar este producto?");
       if (confirmacion) {
         productos.splice(index, 1);
+        localStorage.setItem('productos', JSON.stringify(productos));
         mostrarProductos();
         mostrarProductosAdmin();
       }
