@@ -37,7 +37,7 @@
       padding: 20px;
     }
 
-    .producto {
+    .producto-tarjeta, .producto {
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 16px;
@@ -48,14 +48,24 @@
       transition: transform 0.2s;
     }
 
-    .producto:hover {
+    .producto-tarjeta:hover, .producto:hover {
       transform: translateY(-5px);
     }
 
-    .producto img {
+    .producto-imagen {
       width: 100%;
       height: auto;
       border-radius: 8px;
+    }
+
+    .producto-nombre {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    .producto-precio {
+      font-size: 16px;
+      color: #333;
     }
 
     #carrito {
@@ -77,17 +87,7 @@
 
     #admin-panel {
       display: none;
-      padding: 2em;
-      background-color: #fff;
-      border-top: 2px solid #ccc;
-    }
-
-    form input, form button {
-      display: block;
-      margin: 10px 0;
-      padding: 8px;
-      width: 100%;
-      max-width: 400px;
+      padding: 20px;
     }
 
     table {
@@ -99,6 +99,7 @@
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
+      text-align: left;
     }
 
     th {
@@ -107,7 +108,6 @@
   </style>
 </head>
 <body>
-
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
@@ -117,10 +117,8 @@
   </header>
 
   <main>
-    <!-- Productos -->
     <section id="productos-container"></section>
 
-    <!-- Carrito -->
     <section id="carrito">
       <h2>Carrito de Compras</h2>
       <ul id="lista-carrito"></ul>
@@ -128,18 +126,23 @@
       <button onclick="comprar()">Finalizar Compra</button>
     </section>
 
-    <!-- Panel de Administración -->
     <section id="admin-panel">
       <h2>Panel de Administración</h2>
+
+      <h3>Agregar Nuevo Producto</h3>
       <form onsubmit="agregarProducto(event)">
-        <input type="text" id="nombre" placeholder="Nombre del producto" required>
-        <input type="number" id="precio" placeholder="Precio" required>
-        <input type="file" id="imagen" accept="image/*" required>
-        <input type="number" id="stock" placeholder="Stock" required>
+        <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
+        <input type="number" id="precio" placeholder="Precio" required><br>
+        <input type="file" id="imagen" accept="image/*" required><br>
+        <input type="number" id="stock" placeholder="Stock" required><br>
         <button type="submit">Agregar</button>
       </form>
 
-      <h2>Pedidos Entrantes</h2>
+      <h3>Actualizar Logo</h3>
+      <input type="file" id="logo-input" accept="image/*">
+      <button onclick="guardarLogo()">Guardar Logo</button>
+
+      <h3>Pedidos Entrantes</h3>
       <table>
         <thead>
           <tr>
@@ -153,10 +156,9 @@
     </section>
   </main>
 
-  <button id="botonAdmin" onclick="document.getElementById('admin-panel').style.display = 'block'">⚙️</button>
+  <button id="botonAdmin" onclick="alternarAdmin()">⚙️</button>
 
   <script>
-    // Productos y carrito
     let productos = [
       {
         id: 1,
@@ -175,6 +177,28 @@
     ];
 
     let carrito = [];
+    let claveSecreta = "";
+    const claveCorrecta = "1234";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      mostrarProductos();
+      const logoUrl = localStorage.getItem('companyLogo');
+      if (logoUrl) {
+        document.getElementById('company-logo').src = logoUrl;
+      }
+      agregarPedido('Juan Pérez', 'Desayuno Completo', 'Pagado');
+      agregarPedido('Ana Gómez', 'Desayuno Ligero', 'Pendiente');
+    });
+
+    document.addEventListener("keydown", function(event) {
+      claveSecreta += event.key;
+      if (claveSecreta.includes(claveCorrecta)) {
+        const boton = document.getElementById("botonAdmin");
+        boton.style.display = boton.style.display === "none" ? "block" : "none";
+        claveSecreta = "";
+      }
+      if (claveSecreta.length > 10) claveSecreta = "";
+    });
 
     function mostrarProductos() {
       const contenedor = document.getElementById("productos-container");
@@ -183,7 +207,7 @@
         const div = document.createElement("div");
         div.classList.add("producto");
         div.innerHTML = `
-          <img src="${p.imagen}" alt="${p.nombre}">
+          <img src="${p.imagen}" width="200" height="150"><br>
           <h3>${p.nombre}</h3>
           <p>Precio: $${p.precio}</p>
           <p>Stock: ${p.stock}</p>
@@ -225,67 +249,65 @@
       actualizarCarrito();
     }
 
-    // Agregar producto desde el admin
+    function alternarAdmin() {
+      const panel = document.getElementById("admin-panel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
     function agregarProducto(e) {
       e.preventDefault();
       const nombre = document.getElementById('nombre').value;
-      const precio = parseFloat(document.getElementById('precio').value);
-      const imagenFile = document.getElementById('imagen').files[0];
-      const stock = parseInt(document.getElementById('stock').value);
+      const precio = document.getElementById('precio').value;
+      const imagen = document.getElementById('imagen').files[0];
+      const stock = document.getElementById('stock').value;
 
-      if (imagenFile) {
+      if (imagen) {
         const reader = new FileReader();
         reader.onload = function(event) {
+          const imageUrl = event.target.result;
           const nuevoProducto = {
             id: productos.length + 1,
             nombre,
-            precio,
-            imagen: event.target.result,
-            stock
+            precio: Number(precio),
+            imagen: imageUrl,
+            stock: Number(stock)
           };
           productos.push(nuevoProducto);
           mostrarProductos();
-          alert("Producto agregado exitosamente.");
+          alert("Producto agregado exitosamente");
         };
-        reader.readAsDataURL(imagenFile);
+        reader.readAsDataURL(imagen);
+      } else {
+        alert("Por favor, selecciona una imagen.");
       }
     }
 
-    // Pedidos de ejemplo
     function agregarPedido(cliente, producto, estadoPago) {
+      const pedidosLista = document.getElementById('pedidos-lista');
       const fila = document.createElement('tr');
       fila.innerHTML = `
         <td>${cliente}</td>
         <td>${producto}</td>
         <td>${estadoPago}</td>
       `;
-      document.getElementById('pedidos-lista').appendChild(fila);
+      pedidosLista.appendChild(fila);
     }
 
-    agregarPedido('Juan Pérez', 'Desayuno Completo', 'Pagado');
-    agregarPedido('Ana Gómez', 'Desayuno Ligero', 'Pendiente');
-
-    // Clave para mostrar admin
-    let claveSecreta = "";
-    const claveCorrecta = "1234";
-    document.addEventListener("keydown", function(event) {
-      claveSecreta += event.key;
-      if (claveSecreta.includes(claveCorrecta)) {
-        document.getElementById("botonAdmin").style.display = "block";
-        claveSecreta = "";
+    function guardarLogo() {
+      const archivo = document.getElementById('logo-input').files[0];
+      if (archivo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64 = e.target.result;
+          localStorage.setItem('companyLogo', base64);
+          document.getElementById('company-logo').src = base64;
+          alert("Logo actualizado correctamente.");
+        };
+        reader.readAsDataURL(archivo);
+      } else {
+        alert("Selecciona una imagen primero.");
       }
-      if (claveSecreta.length > 10) claveSecreta = "";
-    });
-
-    // Cargar logo desde localStorage
-    window.onload = function() {
-      const logoUrl = localStorage.getItem('companyLogo');
-      if (logoUrl) {
-        document.getElementById('company-logo').src = logoUrl;
-      }
-      mostrarProductos();
-    };
+    }
   </script>
-
 </body>
 </html>
