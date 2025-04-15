@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -75,7 +76,7 @@
     }
 
     #botonAdmin {
-      display: block;
+      display: none;
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -86,7 +87,7 @@
     }
 
     #admin-panel {
-      display: block;
+      display: none;
       padding: 20px;
     }
 
@@ -194,9 +195,7 @@
       claveSecreta += event.key;
       if (claveSecreta.includes(claveCorrecta)) {
         const boton = document.getElementById("botonAdmin");
-        const panel = document.getElementById("admin-panel");
-        boton.style.display = "none";
-        panel.style.display = "none";
+        boton.style.display = "block";
         claveSecreta = "";
       }
       if (claveSecreta.length > 10) claveSecreta = "";
