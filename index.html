@@ -3,81 +3,287 @@
 <head>
   <meta charset="UTF-8">
   <title>Sorpresas in Style</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    /* Estilo para hacer el logo redondo */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    header {
+      background-color: #ffb6c1;
+      padding: 1em;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+    }
+
     #company-logo {
       width: 50px;
       height: 50px;
       border-radius: 50%;
       object-fit: cover;
     }
+
+    #productos-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .producto {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px;
+      text-align: center;
+      width: 200px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .producto:hover {
+      transform: translateY(-5px);
+    }
+
+    .producto img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    #carrito {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
+    }
+
+    #botonAdmin {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #admin-panel {
+      display: none;
+      padding: 2em;
+      background-color: #fff;
+      border-top: 2px solid #ccc;
+    }
+
+    form input, form button {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2em;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
+
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
     <nav>
-      <a href="index.html">Inicio</a>
+      <a href="#">Inicio</a>
     </nav>
   </header>
 
-  <main id="productos-container">
-    <div class="producto-tarjeta">
-      <img src="ruta/del/producto1.png" alt="Producto 1" class="producto-imagen">
-      <h3 class="producto-nombre">Nombre del Producto 1</h3>
-      <p class="producto-precio">$10.00</p>
-    </div>
-    <div class="producto-tarjeta">
-      <img src="ruta/del/producto2.png" alt="Producto 2" class="producto-imagen">
-      <h3 class="producto-nombre">Nombre del Producto 2</h3>
-      <p class="producto-precio">$15.00</p>
-    </div>
-    <!-- Añade más productos aquí -->
+  <main>
+    <!-- Productos -->
+    <section id="productos-container"></section>
+
+    <!-- Carrito -->
+    <section id="carrito">
+      <h2>Carrito de Compras</h2>
+      <ul id="lista-carrito"></ul>
+      <p>Total: $<span id="total">0</span></p>
+      <button onclick="comprar()">Finalizar Compra</button>
+    </section>
+
+    <!-- Panel de Administración -->
+    <section id="admin-panel">
+      <h2>Panel de Administración</h2>
+      <form onsubmit="agregarProducto(event)">
+        <input type="text" id="nombre" placeholder="Nombre del producto" required>
+        <input type="number" id="precio" placeholder="Precio" required>
+        <input type="file" id="imagen" accept="image/*" required>
+        <input type="number" id="stock" placeholder="Stock" required>
+        <button type="submit">Agregar</button>
+      </form>
+
+      <h2>Pedidos Entrantes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Estado de Pago</th>
+          </tr>
+        </thead>
+        <tbody id="pedidos-lista"></tbody>
+      </table>
+    </section>
   </main>
 
-  <section id="carrito">
-    <h2>Carrito de Compras</h2>
-    <ul id="lista-carrito"></ul>
-    <p>Total: $<span id="total">0</span></p>
-    <button onclick="comprar()">Finalizar Compra</button>
-  </section>
-
-  <script src="script.js"></script>
-  <!-- Botón secreto para el admin -->
-  <button id="botonAdmin" onclick="window.location.href='admin.html'" style="display: none; position: fixed; bottom: 20px; right: 20px; font-size: 24px; background: none; border: none; cursor: pointer;">
-    ⚙️
-  </button>
+  <button id="botonAdmin" onclick="document.getElementById('admin-panel').style.display = 'block'">⚙️</button>
 
   <script>
-    let claveSecreta = "";
-    const claveCorrecta = "1234"; // Puedes cambiar esta clave si quieres
+    // Productos y carrito
+    let productos = [
+      {
+        id: 1,
+        nombre: "Desayuno Romántico",
+        precio: 350,
+        imagen: "https://via.placeholder.com/200x150",
+        stock: 5
+      },
+      {
+        id: 2,
+        nombre: "Sorpresa Cumpleaños",
+        precio: 420,
+        imagen: "https://via.placeholder.com/200x150",
+        stock: 3
+      }
+    ];
 
+    let carrito = [];
+
+    function mostrarProductos() {
+      const contenedor = document.getElementById("productos-container");
+      contenedor.innerHTML = "";
+      productos.forEach(p => {
+        const div = document.createElement("div");
+        div.classList.add("producto");
+        div.innerHTML = `
+          <img src="${p.imagen}" alt="${p.nombre}">
+          <h3>${p.nombre}</h3>
+          <p>Precio: $${p.precio}</p>
+          <p>Stock: ${p.stock}</p>
+          <button onclick="agregarAlCarrito(${p.id})">Agregar</button>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function agregarAlCarrito(id) {
+      const producto = productos.find(p => p.id === id);
+      if (producto && producto.stock > 0) {
+        carrito.push(producto);
+        producto.stock -= 1;
+        mostrarProductos();
+        actualizarCarrito();
+      } else {
+        alert("Producto sin stock");
+      }
+    }
+
+    function actualizarCarrito() {
+      const lista = document.getElementById("lista-carrito");
+      const total = document.getElementById("total");
+      lista.innerHTML = "";
+      let suma = 0;
+      carrito.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = ${p.nombre} - $${p.precio};
+        suma += p.precio;
+        lista.appendChild(li);
+      });
+      total.textContent = suma;
+    }
+
+    function comprar() {
+      alert("Gracias por tu compra!");
+      carrito = [];
+      actualizarCarrito();
+    }
+
+    // Agregar producto desde el admin
+    function agregarProducto(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const precio = parseFloat(document.getElementById('precio').value);
+      const imagenFile = document.getElementById('imagen').files[0];
+      const stock = parseInt(document.getElementById('stock').value);
+
+      if (imagenFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const nuevoProducto = {
+            id: productos.length + 1,
+            nombre,
+            precio,
+            imagen: event.target.result,
+            stock
+          };
+          productos.push(nuevoProducto);
+          mostrarProductos();
+          alert("Producto agregado exitosamente.");
+        };
+        reader.readAsDataURL(imagenFile);
+      }
+    }
+
+    // Pedidos de ejemplo
+    function agregarPedido(cliente, producto, estadoPago) {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${cliente}</td>
+        <td>${producto}</td>
+        <td>${estadoPago}</td>
+      `;
+      document.getElementById('pedidos-lista').appendChild(fila);
+    }
+
+    agregarPedido('Juan Pérez', 'Desayuno Completo', 'Pagado');
+    agregarPedido('Ana Gómez', 'Desayuno Ligero', 'Pendiente');
+
+    // Clave para mostrar admin
+    let claveSecreta = "";
+    const claveCorrecta = "1234";
     document.addEventListener("keydown", function(event) {
       claveSecreta += event.key;
-
-      // Mostrar el botón si la clave es correcta
       if (claveSecreta.includes(claveCorrecta)) {
-        const boton = document.getElementById("botonAdmin");
-        if (boton) {
-          boton.style.display = "block";
-        }
+        document.getElementById("botonAdmin").style.display = "block";
         claveSecreta = "";
       }
-
-      // Limita el tamaño de la cadena
-      if (claveSecreta.length > 10) {
-        claveSecreta = "";
-      }
+      if (claveSecreta.length > 10) claveSecreta = "";
     });
 
-    // Cargar y mostrar el logo desde el almacenamiento local
+    // Cargar logo desde localStorage
     window.onload = function() {
       const logoUrl = localStorage.getItem('companyLogo');
       if (logoUrl) {
         document.getElementById('company-logo').src = logoUrl;
       }
+      mostrarProductos();
     };
   </script>
 
