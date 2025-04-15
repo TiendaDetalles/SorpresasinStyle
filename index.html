@@ -124,6 +124,9 @@
       <h3>Actualizar Logo</h3>
       <input type="file" id="logo-input" accept="image/*">
       <button onclick="guardarLogo()">Guardar Logo</button>
+
+      <h3>Modificar o Eliminar Productos</h3>
+      <ul id="lista-productos-admin"></ul>
     </section>
   </main>
 
@@ -151,6 +154,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       mostrarProductos();
+      mostrarProductosAdmin();
       const logoUrl = localStorage.getItem('companyLogo');
       if (logoUrl) {
         document.getElementById('company-logo').src = logoUrl;
@@ -182,6 +186,20 @@
           <button onclick="agregarAlCarrito(${p.id})">Agregar</button>
         `;
         contenedor.appendChild(div);
+      });
+    }
+
+    function mostrarProductosAdmin() {
+      const lista = document.getElementById("lista-productos-admin");
+      lista.innerHTML = "";
+      productos.forEach((p, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${p.nombre} - $${p.precio}
+          <button onclick="modificarProducto(${index})">Modificar</button>
+          <button onclick="eliminarProducto(${index})">Eliminar</button>
+        `;
+        lista.appendChild(li);
       });
     }
 
@@ -236,11 +254,32 @@
           };
           productos.push(nuevoProducto);
           mostrarProductos();
+          mostrarProductosAdmin();
           alert("Producto agregado exitosamente");
         };
         reader.readAsDataURL(imagen);
       } else {
         alert("Por favor, selecciona una imagen.");
+      }
+    }
+
+    function modificarProducto(index) {
+      const nuevoNombre = prompt("Ingrese el nuevo nombre del producto:", productos[index].nombre);
+      const nuevoPrecio = prompt("Ingrese el nuevo precio del producto:", productos[index].precio);
+      if (nuevoNombre !== null && nuevoPrecio !== null) {
+        productos[index].nombre = nuevoNombre;
+        productos[index].precio = Number(nuevoPrecio);
+        mostrarProductos();
+        mostrarProductosAdmin();
+      }
+    }
+
+    function eliminarProducto(index) {
+      const confirmacion = confirm("¿Está seguro de que desea eliminar este producto?");
+      if (confirmacion) {
+        productos.splice(index, 1);
+        mostrarProductos();
+        mostrarProductosAdmin();
       }
     }
 
