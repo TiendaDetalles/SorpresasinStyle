@@ -75,7 +75,7 @@
     }
 
     #botonAdmin {
-      display: none;
+      display: block;
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -83,6 +83,27 @@
       background: none;
       border: none;
       cursor: pointer;
+    }
+
+    #admin-panel {
+      display: block;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2em;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
     }
   </style>
 </head>
@@ -104,9 +125,38 @@
       <p>Total: $<span id="total">0</span></p>
       <button onclick="comprar()">Finalizar Compra</button>
     </section>
+
+    <section id="admin-panel">
+      <h2>Panel de Administración</h2>
+
+      <h3>Agregar Nuevo Producto</h3>
+      <form onsubmit="agregarProducto(event)">
+        <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
+        <input type="number" id="precio" placeholder="Precio" required><br>
+        <input type="file" id="imagen" accept="image/*" required><br>
+        <input type="number" id="stock" placeholder="Stock" required><br>
+        <button type="submit">Agregar</button>
+      </form>
+
+      <h3>Actualizar Logo</h3>
+      <input type="file" id="logo-input" accept="image/*">
+      <button onclick="guardarLogo()">Guardar Logo</button>
+
+      <h3>Pedidos Entrantes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Estado de Pago</th>
+          </tr>
+        </thead>
+        <tbody id="pedidos-lista"></tbody>
+      </table>
+    </section>
   </main>
 
-  <button id="botonAdmin" onclick="redirigirAdmin()">⚙️</button>
+  <button id="botonAdmin" onclick="alternarAdmin()">⚙️</button>
 
   <script>
     let productos = [
@@ -136,13 +186,17 @@
       if (logoUrl) {
         document.getElementById('company-logo').src = logoUrl;
       }
+      agregarPedido('Juan Pérez', 'Desayuno Completo', 'Pagado');
+      agregarPedido('Ana Gómez', 'Desayuno Ligero', 'Pendiente');
     });
 
     document.addEventListener("keydown", function(event) {
       claveSecreta += event.key;
       if (claveSecreta.includes(claveCorrecta)) {
         const boton = document.getElementById("botonAdmin");
-        boton.style.display = "block";
+        const panel = document.getElementById("admin-panel");
+        boton.style.display = "none";
+        panel.style.display = "none";
         claveSecreta = "";
       }
       if (claveSecreta.length > 10) claveSecreta = "";
@@ -197,8 +251,64 @@
       actualizarCarrito();
     }
 
-    function redirigirAdmin() {
-      window.location.href = "admin.html"; // Cambia "admin.html" por la URL de tu página de administración
+    function alternarAdmin() {
+      const panel = document.getElementById("admin-panel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
+    function agregarProducto(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const precio = document.getElementById('precio').value;
+      const imagen = document.getElementById('imagen').files[0];
+      const stock = document.getElementById('stock').value;
+
+      if (imagen) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageUrl = event.target.result;
+          const nuevoProducto = {
+            id: productos.length + 1,
+            nombre,
+            precio: Number(precio),
+            imagen: imageUrl,
+            stock: Number(stock)
+          };
+          productos.push(nuevoProducto);
+          mostrarProductos();
+          alert("Producto agregado exitosamente");
+        };
+        reader.readAsDataURL(imagen);
+      } else {
+        alert("Por favor, selecciona una imagen.");
+      }
+    }
+
+    function agregarPedido(cliente, producto, estadoPago) {
+      const pedidosLista = document.getElementById('pedidos-lista');
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${cliente}</td>
+        <td>${producto}</td>
+        <td>${estadoPago}</td>
+      `;
+      pedidosLista.appendChild(fila);
+    }
+
+    function guardarLogo() {
+      const archivo = document.getElementById('logo-input').files[0];
+      if (archivo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64 = e.target.result;
+          localStorage.setItem('companyLogo', base64);
+          document.getElementById('company-logo').src = base64;
+          alert("Logo actualizado correctamente.");
+        };
+        reader.readAsDataURL(archivo);
+      } else {
+        alert("Selecciona una imagen primero.");
+      }
     }
   </script>
 </body>
