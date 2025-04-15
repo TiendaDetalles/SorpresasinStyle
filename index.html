@@ -135,7 +135,6 @@
         <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
         <input type="number" id="precio" placeholder="Precio" required><br>
         <input type="file" id="imagen" accept="image/*" required><br>
-        <input type="number" id="stock" placeholder="Stock" required><br>
         <button type="submit">Agregar</button>
       </form>
 
@@ -154,6 +153,9 @@
         </thead>
         <tbody id="pedidos-lista"></tbody>
       </table>
+
+      <h3>Eliminar Productos</h3>
+      <ul id="lista-productos-admin"></ul>
     </section>
   </main>
 
@@ -165,15 +167,13 @@
         id: 1,
         nombre: "Desayuno Romántico",
         precio: 350,
-        imagen: "https://via.placeholder.com/200x150",
-        stock: 5
+        imagen: "https://via.placeholder.com/200x150"
       },
       {
         id: 2,
         nombre: "Sorpresa Cumpleaños",
         precio: 420,
-        imagen: "https://via.placeholder.com/200x150",
-        stock: 3
+        imagen: "https://via.placeholder.com/200x150"
       }
     ];
 
@@ -183,6 +183,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       mostrarProductos();
+      mostrarProductosAdmin();
       const logoUrl = localStorage.getItem('companyLogo');
       if (logoUrl) {
         document.getElementById('company-logo').src = logoUrl;
@@ -213,22 +214,30 @@
           <img src="${p.imagen}" width="200" height="150"><br>
           <h3>${p.nombre}</h3>
           <p>Precio: $${p.precio}</p>
-          <p>Stock: ${p.stock}</p>
           <button onclick="agregarAlCarrito(${p.id})">Agregar</button>
         `;
         contenedor.appendChild(div);
       });
     }
 
+    function mostrarProductosAdmin() {
+      const lista = document.getElementById("lista-productos-admin");
+      lista.innerHTML = "";
+      productos.forEach((p, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${p.nombre} - $${p.precio}
+          <button onclick="eliminarProducto(${index})">Eliminar</button>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
     function agregarAlCarrito(id) {
       const producto = productos.find(p => p.id === id);
-      if (producto && producto.stock > 0) {
+      if (producto) {
         carrito.push(producto);
-        producto.stock -= 1;
-        mostrarProductos();
         actualizarCarrito();
-      } else {
-        alert("Producto sin stock");
       }
     }
 
@@ -262,7 +271,6 @@
       const nombre = document.getElementById('nombre').value;
       const precio = document.getElementById('precio').value;
       const imagen = document.getElementById('imagen').files[0];
-      const stock = document.getElementById('stock').value;
 
       if (imagen) {
         const reader = new FileReader();
@@ -272,18 +280,25 @@
             id: productos.length + 1,
             nombre,
             precio: Number(precio),
-            imagen: imageUrl,
-            stock: Number(stock)
+            imagen: imageUrl
           };
           productos.push(nuevoProducto);
           localStorage.setItem('productos', JSON.stringify(productos));
           mostrarProductos();
+          mostrarProductosAdmin();
           alert("Producto agregado exitosamente");
         };
         reader.readAsDataURL(imagen);
       } else {
         alert("Por favor, selecciona una imagen.");
       }
+    }
+
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      localStorage.setItem('productos', JSON.stringify(productos));
+      mostrarProductos();
+      mostrarProductosAdmin();
     }
 
     function agregarPedido(cliente, producto, estadoPago) {
