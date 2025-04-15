@@ -16,7 +16,7 @@
 </head>
 <body>
   <header>
-    <img id="company-logo" src="ruta/del/logo.png" alt="Logo de la empresa">
+    <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
     <nav>
       <a href="index.html">Inicio</a>
@@ -61,6 +61,14 @@
         claveSecreta = "";
       }
     });
+
+    // Cargar y mostrar el logo desde el almacenamiento local
+    window.onload = function() {
+      const logoUrl = localStorage.getItem('companyLogo');
+      if (logoUrl) {
+        document.getElementById('company-logo').src = logoUrl;
+      }
+    };
   </script>
 
 </body>
