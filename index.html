@@ -106,6 +106,8 @@
       border: 1px solid #888;
       width: 50%;
       max-width: 400px;
+      position: relative;
+      cursor: move;
     }
 
     .close {
@@ -131,6 +133,14 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+    }
+
+    .cart-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -158,7 +168,7 @@
 
   <!-- Modal Principal de Administración -->
   <div id="adminModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" id="adminModalContent">
       <span class="close" onclick="closeModal('adminModal')">&times;</span>
       <h2>Panel de Administración</h2>
       <button class="admin-button" onclick="openModal('logoModal')">Cambiar Logo</button>
@@ -169,7 +179,7 @@
 
   <!-- Modal para Cambiar Logo -->
   <div id="logoModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" id="logoModalContent">
       <span class="close" onclick="closeModal('logoModal')">&times;</span>
       <h3>Actualizar Logo</h3>
       <input type="file" id="logo-input" accept="image/*">
@@ -180,7 +190,7 @@
 
   <!-- Modal para Gestionar Productos -->
   <div id="productosModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" id="productosModalContent">
       <span class="close" onclick="closeModal('productosModal')">&times;</span>
       <h3>Agregar Nuevo Producto</h3>
       <form onsubmit="agregarProducto(event)">
@@ -198,7 +208,7 @@
 
   <!-- Modal para Detalles del Producto -->
   <div id="productModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" id="productModalContent">
       <span class="close" onclick="closeModal('productModal')">&times;</span>
       <img id="modal-image" src="" alt="Imagen del producto" style="width: 100%; height: auto;">
       <h2 id="modal-name"></h2>
@@ -236,6 +246,10 @@
       if (logoUrl) {
         document.getElementById('company-logo').src = logoUrl;
       }
+      makeDraggable('adminModalContent');
+      makeDraggable('logoModalContent');
+      makeDraggable('productosModalContent');
+      makeDraggable('productModalContent');
     });
 
     document.addEventListener("keydown", function(event) {
@@ -257,7 +271,7 @@
           <img src="${p.imagen}" width="200" height="150" onclick="mostrarDetalleProducto(${index})"><br>
           <h3>${p.nombre}</h3>
           <p>Precio: $${p.precio}</p>
-          <button onclick="agregarAlCarrito(${p.id})">Agregar</button>
+          <button class="cart-button" onclick="agregarAlCarrito(${p.id})">🛒</button>
         `;
         contenedor.appendChild(div);
       });
@@ -393,6 +407,37 @@
         reader.readAsDataURL(archivo);
       } else {
         alert("Selecciona una imagen primero.");
+      }
+    }
+
+    function makeDraggable(elementId) {
+      const element = document.getElementById(elementId);
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      element.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
       }
     }
   </script>
