@@ -7,7 +7,7 @@
 </head>
 <body>
   <header>
-    <img src="ruta/del/logo.png" alt="Logo de la empresa" style="width: 50px; height: auto;">
+    <img id="company-logo" src="" alt="Logo de la empresa" style="width: 50px; height: auto;">
     <h1>Sorpresas in Style</h1>
     <nav>
       <a href="index.html">Inicio</a>
@@ -52,38 +52,15 @@
         claveSecreta = "";
       }
     });
+
+    // Cargar y mostrar el logo desde el almacenamiento local
+    window.onload = function() {
+      const logoUrl = localStorage.getItem('companyLogo');
+      if (logoUrl) {
+        document.getElementById('company-logo').src = logoUrl;
+      }
+    };
   </script>
 
 </body>
 </html>
-<script>
-  let claveSecreta = "";
-  const claveCorrecta = "1234"; // Puedes cambiar esta clave si quieres
-
-  document.addEventListener("keydown", function(event) {
-    claveSecreta += event.key;
-
-    // Mostrar el botón si la clave es correcta
-    if (claveSecreta.includes(claveCorrecta)) {
-      const boton = document.getElementById("botonAdmin");
-      if (boton) {
-        boton.style.display = "block";
-      }
-      claveSecreta = "";
-    }
-
-    // Limita el tamaño de la cadena
-    if (claveSecreta.length > 10) {
-      claveSecreta = "";
-    }
-  });
-</script>
-
-
-
-
-
-  
-</body>
-</html>
-
