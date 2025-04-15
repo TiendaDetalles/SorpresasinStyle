@@ -195,8 +195,8 @@
       if (claveSecreta.includes(claveCorrecta)) {
         const boton = document.getElementById("botonAdmin");
         const panel = document.getElementById("admin-panel");
-        boton.style.display = "none";
-        panel.style.display = "none";
+        boton.style.display = boton.style.display === "none" ? "block" : "none";
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
         claveSecreta = "";
       }
       if (claveSecreta.length > 10) claveSecreta = "";
