@@ -89,6 +89,43 @@
       display: none; /* Ocultar por defecto */
       padding: 20px;
     }
+
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +154,7 @@
       <form onsubmit="agregarProducto(event)">
         <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
         <input type="number" id="precio" placeholder="Precio" required><br>
+        <textarea id="descripcion" placeholder="Descripción del producto" required></textarea><br>
         <input type="file" id="imagen" accept="image/*" required><br>
         <button type="submit">Agregar</button>
       </form>
@@ -132,19 +170,32 @@
 
   <button id="botonAdmin" onclick="alternarAdmin()">⚙️</button>
 
+  <!-- Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modal-image" src="" alt="Imagen del producto" style="width: 100%; height: auto;">
+      <h2 id="modal-name"></h2>
+      <p id="modal-price"></p>
+      <p id="modal-description"></p>
+    </div>
+  </div>
+
   <script>
     let productos = [
       {
         id: 1,
         nombre: "Desayuno Romántico",
         precio: 350,
-        imagen: "https://via.placeholder.com/200x150"
+        imagen: "https://via.placeholder.com/200x150",
+        descripcion: "Un desayuno perfecto para compartir con tu pareja."
       },
       {
         id: 2,
         nombre: "Sorpresa Cumpleaños",
         precio: 420,
-        imagen: "https://via.placeholder.com/200x150"
+        imagen: "https://via.placeholder.com/200x150",
+        descripcion: "La sorpresa ideal para celebrar un cumpleaños especial."
       }
     ];
 
@@ -176,17 +227,30 @@
     function mostrarProductos() {
       const contenedor = document.getElementById("productos-container");
       contenedor.innerHTML = "";
-      productos.forEach(p => {
+      productos.forEach((p, index) => {
         const div = document.createElement("div");
         div.classList.add("producto");
         div.innerHTML = `
-          <img src="${p.imagen}" width="200" height="150"><br>
+          <img src="${p.imagen}" width="200" height="150" onclick="mostrarDetalleProducto(${index})"><br>
           <h3>${p.nombre}</h3>
           <p>Precio: $${p.precio}</p>
           <button onclick="agregarAlCarrito(${p.id})">Agregar</button>
         `;
         contenedor.appendChild(div);
       });
+    }
+
+    function mostrarDetalleProducto(index) {
+      const producto = productos[index];
+      document.getElementById('modal-image').src = producto.imagen;
+      document.getElementById('modal-name').textContent = producto.nombre;
+      document.getElementById('modal-price').textContent = `Precio: $${producto.precio}`;
+      document.getElementById('modal-description').textContent = producto.descripcion;
+      document.getElementById('productModal').style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').style.display = "none";
     }
 
     function mostrarProductosAdmin() {
@@ -240,6 +304,7 @@
       e.preventDefault();
       const nombre = document.getElementById('nombre').value;
       const precio = document.getElementById('precio').value;
+      const descripcion = document.getElementById('descripcion').value;
       const imagen = document.getElementById('imagen').files[0];
 
       if (imagen) {
@@ -250,7 +315,8 @@
             id: productos.length + 1,
             nombre,
             precio: Number(precio),
-            imagen: imageUrl
+            imagen: imageUrl,
+            descripcion
           };
           productos.push(nuevoProducto);
           mostrarProductos();
@@ -266,9 +332,11 @@
     function modificarProducto(index) {
       const nuevoNombre = prompt("Ingrese el nuevo nombre del producto:", productos[index].nombre);
       const nuevoPrecio = prompt("Ingrese el nuevo precio del producto:", productos[index].precio);
-      if (nuevoNombre !== null && nuevoPrecio !== null) {
+      const nuevaDescripcion = prompt("Ingrese la nueva descripción del producto:", productos[index].descripcion);
+      if (nuevoNombre !== null && nuevoPrecio !== null && nuevaDescripcion !== null) {
         productos[index].nombre = nuevoNombre;
         productos[index].precio = Number(nuevoPrecio);
+        productos[index].descripcion = nuevaDescripcion;
         mostrarProductos();
         mostrarProductosAdmin();
       }
@@ -298,6 +366,15 @@
         alert("Selecciona una imagen primero.");
       }
     }
+  </script>
+</body>
+</html> }
+  </script>
+</body>
+</html> }
+  </script>
+</body>
+</html> }
   </script>
 </body>
 </html>
