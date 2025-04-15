@@ -1,54 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda en Línea</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Sorpresas in Style</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Bienvenido a Nuestra Tienda</h1>
-        <div class="cart-container">
-            <button id="cartButton">Carrito (0)</button>
-        </div>
-    </header>
+  <header>
+    <h1>Sorpresas in Style</h1>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="admin.html">Administrador</a>
+    </nav>
+  </header>
 
-    <section class="products">
-        <div class="product" id="product1">
-            <img src="https://via.placeholder.com/150" alt="Producto 1">
-            <h2>Producto 1</h2>
-            <p>Descripción del Producto 1.</p>
-            <span>Precio: $10</span>
-            <button onclick="addToCart('Producto 1', 10, 'product1')">Agregar al Carrito</button>
-        </div>
-        <div class="product" id="product2">
-            <img src="https://via.placeholder.com/150" alt="Producto 2">
-            <h2>Producto 2</h2>
-            <p>Descripción del Producto 2.</p>
-            <span>Precio: $15</span>
-            <button onclick="addToCart('Producto 2', 15, 'product2')">Agregar al Carrito</button>
-        </div>
-        <div class="product" id="product3">
-            <img src="https://via.placeholder.com/150" alt="Producto 3">
-            <h2>Producto 3</h2>
-            <p>Descripción del Producto 3.</p>
-            <span>Precio: $20</span>
-            <button onclick="addToCart('Producto 3', 20, 'product3')">Agregar al Carrito</button>
-        </div>
-    </section>
+  <main id="productos-container">
+    <!-- Aquí se mostrarán los productos -->
+  </main>
 
-    <div id="cartModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeCart()">&times;</span>
-            <h2>Carrito de Compras</h2>
-            <ul id="cartItems"></ul>
-            <p>Total: $<span id="totalPrice">0</span></p>
-            <button onclick="checkout()">Finalizar Compra</button>
-        </div>
-    </div>
+  <section id="carrito">
+    <h2>Carrito de Compras</h2>
+    <ul id="lista-carrito"></ul>
+    <p>Total: $<span id="total">0</span></p>
+    <button onclick="comprar()">Finalizar Compra</button>
+  </section>
 
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
 
