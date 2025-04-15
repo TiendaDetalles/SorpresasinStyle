@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -194,7 +195,7 @@
       claveSecreta += event.key;
       if (claveSecreta.includes(claveCorrecta)) {
         const boton = document.getElementById("botonAdmin");
-        boton.style.display = boton.style.display === "none" ? "block" : "none";
+        boton.style.display = "block";
         claveSecreta = "";
       }
       if (claveSecreta.length > 10) claveSecreta = "";
@@ -236,7 +237,7 @@
       let suma = 0;
       carrito.forEach(p => {
         const li = document.createElement("li");
-        li.textContent = ${p.nombre} - $${p.precio};
+        li.textContent = `${p.nombre} - $${p.precio}`;
         suma += p.precio;
         lista.appendChild(li);
       });
@@ -311,3 +312,4 @@
   </script>
 </body>
 </html>
+
