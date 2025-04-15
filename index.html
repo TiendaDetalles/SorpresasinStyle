@@ -4,10 +4,19 @@
   <meta charset="UTF-8">
   <title>Sorpresas in Style</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Estilo para hacer el logo redondo */
+    #company-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <img id="company-logo" src="" alt="Logo de la empresa" style="width: 50px; height: auto;">
+    <img id="company-logo" src="ruta/del/logo.png" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
     <nav>
       <a href="index.html">Inicio</a>
@@ -52,14 +61,6 @@
         claveSecreta = "";
       }
     });
-
-    // Cargar y mostrar el logo desde el almacenamiento local
-    window.onload = function() {
-      const logoUrl = localStorage.getItem('companyLogo');
-      if (logoUrl) {
-        document.getElementById('company-logo').src = logoUrl;
-      }
-    };
   </script>
 
 </body>
