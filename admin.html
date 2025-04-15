@@ -53,6 +53,12 @@
       <button type="submit">Agregar</button>
     </form>
 
+    <h2>Cambiar Logo de la Empresa</h2>
+    <form onsubmit="cambiarLogo(event)">
+      <input type="file" id="logo" accept="image/*" required><br>
+      <button type="submit">Cambiar Logo</button>
+    </form>
+
     <h2>Pedidos Entrantes</h2>
     <table>
       <thead>
@@ -85,6 +91,23 @@
         reader.readAsDataURL(imagen);
       } else {
         alert("Por favor, selecciona una imagen.");
+      }
+    }
+
+    function cambiarLogo(e) {
+      e.preventDefault();
+      const logo = document.getElementById('logo').files[0];
+
+      if (logo) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const logoUrl = event.target.result;
+          localStorage.setItem('companyLogo', logoUrl);
+          alert("Logo cambiado exitosamente.");
+        };
+        reader.readAsDataURL(logo);
+      } else {
+        alert("Por favor, selecciona una imagen para el logo.");
       }
     }
 
