@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,7 +17,7 @@
     <form onsubmit="agregarProducto(event)">
       <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
       <input type="number" id="precio" placeholder="Precio" required><br>
-      <input type="text" id="imagen" placeholder="URL de imagen" required><br>
+      <input type="file" id="imagen" accept="image/*" required><br>
       <input type="number" id="stock" placeholder="Stock" required><br>
       <button type="submit">Agregar</button>
     </form>
@@ -25,7 +26,22 @@
   <script>
     function agregarProducto(e) {
       e.preventDefault();
-      alert("Producto agregado (simulado, aún no se guarda)");
+      const nombre = document.getElementById('nombre').value;
+      const precio = document.getElementById('precio').value;
+      const imagen = document.getElementById('imagen').files[0];
+      const stock = document.getElementById('stock').value;
+
+      if (imagen) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageUrl = event.target.result;
+          // Aquí puedes enviar los datos del producto al servidor o almacenarlos localmente
+          alert(`Producto agregado: ${nombre}, Precio: ${precio}, Imagen: ${imageUrl}, Stock: ${stock}`);
+        };
+        reader.readAsDataURL(imagen);
+      } else {
+        alert("Por favor, selecciona una imagen.");
+      }
     }
   </script>
 </body>
