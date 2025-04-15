@@ -26,6 +26,27 @@
   </section>
 
   <script src="script.js"></script>
+<button id="botonAdmin" onclick="window.location.href='admin.html'" style="display: none; position: fixed; bottom: 20px; right: 20px; font-size: 24px; background: none; border: none; cursor: pointer;">
+  ⚙️
+</button>
+
+<script>
+  let claveSecreta = "";
+  const claveCorrecta = "1234"; // Puedes cambiarla a lo que quieras
+
+  document.addEventListener("keydown", function(event) {
+    claveSecreta += event.key;
+
+    if (claveSecreta.includes(claveCorrecta)) {
+      document.getElementById("botonAdmin").style.display = "block";
+      claveSecreta = ""; // Reinicia para que no siga mostrando siempre
+    }
+
+    if (claveSecreta.length > 10) {
+      claveSecreta = ""; // Evita que se acumulen muchas letras
+    }
+  });
+</script>
 </body>
 </html>
 
