@@ -1,4 +1,3 @@
-<!-- Reemplaza TODO tu código anterior con esto -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +9,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #e0f7f9; /* Aqua marina suave */
+      background-color: #f4f4f9;
     }
 
     header {
@@ -35,42 +34,38 @@
     }
 
     .producto-tarjeta {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px;
+      text-align: center;
+      width: 180px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      padding: 10px;
-      margin: 10px;
-      width: 160px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
       position: relative;
     }
 
     .producto-imagen {
       width: 100%;
+      height: auto;
       border-radius: 8px;
-      height: 120px;
-      object-fit: cover;
     }
 
     .producto-nombre {
       font-size: 16px;
-      margin-top: 8px;
+      margin: 8px 0;
       color: #333;
-      font-weight: bold;
     }
 
     .producto-precio {
       font-size: 14px;
-      color: #555;
+      color: #666;
     }
 
     .producto-boton {
       position: absolute;
       bottom: 10px;
-      left: 10px;
+      right: 10px;
       background-color: #00bfa5;
       border: none;
       border-radius: 50%;
@@ -84,18 +79,16 @@
     #carrito {
       padding: 20px;
       background-color: #fff;
-      border-top: 2px solid #00bfa5;
+      border-top: 1px solid #ddd;
     }
 
     #botonAdmin {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      font-size: 28px;
-      background: white;
-      border: 2px solid #00bfa5;
-      border-radius: 50%;
-      padding: 10px;
+      font-size: 24px;
+      background: none;
+      border: none;
       cursor: pointer;
     }
 
@@ -116,7 +109,7 @@
       background-color: #fefefe;
       margin: 5% auto;
       padding: 20px;
-      border-radius: 10px;
+      border: 1px solid #888;
       width: 90%;
       max-width: 400px;
       position: relative;
@@ -129,8 +122,11 @@
       font-weight: bold;
     }
 
-    .close:hover {
+    .close:hover,
+    .close:focus {
       color: black;
+      text-decoration: none;
+      cursor: pointer;
     }
 
     .admin-button {
@@ -140,14 +136,24 @@
       background-color: #00bfa5;
       border: none;
       border-radius: 5px;
-      color: white;
       cursor: pointer;
       font-size: 16px;
+      color: white;
     }
 
     @media screen and (max-width: 600px) {
       .producto-tarjeta {
-        width: 45%;
+        width: 90%;
+        margin: 10px auto;
+      }
+
+      header {
+        padding: 1em 0.5em;
+      }
+
+      nav a {
+        display: block;
+        margin: 5px 0;
       }
     }
   </style>
@@ -156,6 +162,9 @@
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
+    <nav>
+      <a href="#">Inicio</a>
+    </nav>
   </header>
 
   <main>
@@ -169,7 +178,7 @@
     </section>
   </main>
 
-  <!-- Modal Admin -->
+  <!-- Modal de Administración -->
   <div id="adminModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
@@ -189,77 +198,95 @@
   <button id="botonAdmin">⚙️</button>
 
   <script>
-    const modal = document.getElementById("adminModal");
-    const botonAdmin = document.getElementById("botonAdmin");
-    const span = document.getElementsByClassName("close")[0];
-    const productosContainer = document.getElementById("productos-container");
-    const productosAgregados = document.getElementById("productos-agregados");
+    var modal = document.getElementById("adminModal");
+    var botonAdmin = document.getElementById("botonAdmin");
+    var span = document.getElementsByClassName("close")[0];
+    var productosContainer = document.getElementById("productos-container");
+    var productosAgregados = document.getElementById("productos-agregados");
 
-    let productos = JSON.parse(localStorage.getItem("productos")) || [];
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    var productos = JSON.parse(localStorage.getItem("productos")) || [];
 
-    botonAdmin.onclick = () => modal.style.display = "block";
-    span.onclick = () => modal.style.display = "none";
-    window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+    botonAdmin.onclick = function() {
+      modal.style.display = "block";
+    }
 
-    document.getElementById("formulario-producto").addEventListener("submit", function(e) {
-      e.preventDefault();
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
 
-      const nombre = document.getElementById("nombreProducto").value;
-      const precio = document.getElementById("precioProducto").value;
-      const imagen = document.getElementById("imagenProducto").files[0];
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
 
+    document.getElementById("formulario-producto").addEventListener("submit", function(event) {
+      event.preventDefault();
+      
+      var nombre = document.getElementById("nombreProducto").value;
+      var precio = document.getElementById("precioProducto").value;
+      var imagen = document.getElementById("imagenProducto").files[0];
+      
       if (imagen) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const nuevoProducto = { nombre, precio, imagen: reader.result };
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          var nuevoProducto = {
+            nombre: nombre,
+            precio: precio,
+            imagen: reader.result
+          };
           productos.push(nuevoProducto);
           localStorage.setItem("productos", JSON.stringify(productos));
           actualizarVista();
-          this.reset(); // reset form
-          document.getElementById("formulario-producto").reset(); // limpia campos
         };
         reader.readAsDataURL(imagen);
       }
+
+      this.reset(); // Limpia el formulario
     });
 
     function actualizarVista() {
       productosContainer.innerHTML = '';
       productosAgregados.innerHTML = '';
       productos.forEach((producto, index) => {
-        productosContainer.innerHTML += `
+        var productoHTML = `
           <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
           </div>
         `;
+        productosContainer.innerHTML += productoHTML;
 
-        productosAgregados.innerHTML += `
+        var adminHTML = `
           <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
             <button class="admin-button" onclick="editarProducto(${index})">Editar</button>
           </div>
         `;
+        productosAgregados.innerHTML += adminHTML;
       });
     }
 
+    var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
     function agregarAlCarrito(index) {
-      carrito.push(productos[index]);
+      var producto = productos[index];
+      carrito.push(producto);
       localStorage.setItem("carrito", JSON.stringify(carrito));
       actualizarCarrito();
     }
 
     function actualizarCarrito() {
-      const listaCarrito = document.getElementById("lista-carrito");
+      var listaCarrito = document.getElementById("lista-carrito");
       listaCarrito.innerHTML = '';
-      let total = 0;
+      var total = 0;
       carrito.forEach(producto => {
-        const li = document.createElement("li");
+        var li = document.createElement("li");
         li.textContent = `${producto.nombre} - $${producto.precio}`;
         listaCarrito.appendChild(li);
         total += parseFloat(producto.precio);
@@ -274,8 +301,8 @@
     }
 
     function editarProducto(index) {
-      const nuevoNombre = prompt("Nuevo nombre:", productos[index].nombre);
-      const nuevoPrecio = prompt("Nuevo precio:", productos[index].precio);
+      var nuevoNombre = prompt("Nuevo nombre del producto:", productos[index].nombre);
+      var nuevoPrecio = prompt("Nuevo precio del producto:", productos[index].precio);
       if (nuevoNombre && nuevoPrecio) {
         productos[index].nombre = nuevoNombre;
         productos[index].precio = nuevoPrecio;
@@ -286,7 +313,7 @@
 
     function comprar() {
       if (carrito.length > 0) {
-        alert("Gracias por tu compra!");
+        alert("¡Gracias por tu compra!");
         carrito = [];
         localStorage.setItem("carrito", JSON.stringify(carrito));
         actualizarCarrito();
