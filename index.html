@@ -9,11 +9,11 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #e0f7f5;
+      background-color: #f4f4f9;
     }
 
     header {
-      background-color: #4dd0e1;
+      background-color: #66e0d4;
       padding: 1em;
       text-align: center;
       color: white;
@@ -26,53 +26,65 @@
       object-fit: cover;
     }
 
+    #filtro-categoria {
+      margin: 20px auto 0;
+      display: flex;
+      justify-content: center;
+    }
+
     #productos-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 12px;
       padding: 20px;
     }
 
     .producto-tarjeta {
       border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 16px;
-      margin: 16px;
+      padding: 12px;
+      width: 160px;
       text-align: center;
-      width: 180px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background-color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       position: relative;
     }
 
     .producto-imagen {
       width: 100%;
-      height: auto;
-      border-radius: 8px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
     }
 
     .producto-nombre {
-      font-size: 16px;
-      margin: 8px 0;
+      font-size: 14px;
+      margin: 6px 0;
       color: #333;
     }
 
     .producto-precio {
-      font-size: 14px;
+      font-size: 13px;
       color: #666;
+    }
+
+    .producto-categoria {
+      font-size: 12px;
+      color: #999;
     }
 
     .producto-boton {
       position: absolute;
       bottom: 10px;
       right: 10px;
-      background-color: #ff6f61;
+      background-color: #007acc;
       border: none;
       border-radius: 50%;
       color: white;
-      width: 35px;
-      height: 35px;
-      font-size: 18px;
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
       cursor: pointer;
     }
 
@@ -87,15 +99,18 @@
       bottom: 20px;
       right: 20px;
       font-size: 24px;
-      background: none;
+      background: #007acc;
+      color: white;
       border: none;
+      padding: 10px;
+      border-radius: 50%;
       cursor: pointer;
     }
 
     .modal {
       display: none;
       position: fixed;
-      z-index: 1;
+      z-index: 10;
       left: 0;
       top: 0;
       width: 100%;
@@ -106,8 +121,8 @@
     }
 
     .modal-content {
-      background-color: #fefefe;
-      margin: 5% auto;
+      background-color: #fff;
+      margin: auto;
       padding: 20px;
       border: 1px solid #888;
       width: 90%;
@@ -125,41 +140,25 @@
     .close:hover,
     .close:focus {
       color: black;
-      text-decoration: none;
       cursor: pointer;
     }
 
     .admin-button {
       display: block;
+      width: 100%;
       margin: 10px 0;
       padding: 10px;
-      background-color: #4dd0e1;
+      background-color: #66e0d4;
       border: none;
       border-radius: 5px;
-      cursor: pointer;
       font-size: 16px;
       color: white;
-    }
-
-    .categoria-select {
-      margin-bottom: 10px;
+      cursor: pointer;
     }
 
     @media screen and (max-width: 600px) {
-      #productos-container {
-        justify-content: space-around;
-      }
-
       .producto-tarjeta {
         width: 45%;
-        margin: 10px 5px;
-      }
-    }
-
-    @media screen and (max-width: 400px) {
-      .producto-tarjeta {
-        width: 90%;
-        margin: 10px auto;
       }
     }
   </style>
@@ -168,14 +167,16 @@
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
-    <nav>
-      <a href="#">Inicio</a>
-    </nav>
   </header>
+
+  <div id="filtro-categoria">
+    <select id="selector-categoria" onchange="filtrarCategoria()">
+      <option value="todas">Todas las categorías</option>
+    </select>
+  </div>
 
   <main>
     <section id="productos-container"></section>
-
     <section id="carrito">
       <h2>Carrito de Compras</h2>
       <ul id="lista-carrito"></ul>
@@ -192,61 +193,50 @@
       <form id="formulario-producto">
         <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required><br><br>
         <input type="number" id="precioProducto" placeholder="Precio" required><br><br>
+        <input type="text" id="categoriaProducto" placeholder="Categoría" required><br><br>
         <input type="file" id="imagenProducto" accept="image/*" required><br><br>
-        <select id="categoriaProducto" class="categoria-select" required>
-          <option value="">Selecciona una categoría</option>
-          <option value="Desayunos">Desayunos</option>
-          <option value="Almuerzos">Almuerzos</option>
-          <option value="Bebidas">Bebidas</option>
-        </select><br><br>
         <button type="submit" class="admin-button">Agregar Desayuno</button>
       </form>
       <hr>
       <h3>Desayunos Agregados</h3>
       <div id="productos-agregados"></div>
+      <hr>
+      <h3>Cambiar Logo</h3>
+      <input type="file" id="logoInput" accept="image/*" />
+      <button onclick="cambiarLogo()" class="admin-button">Cambiar Logo</button>
     </div>
   </div>
 
   <button id="botonAdmin">⚙️</button>
 
   <script>
-    var modal = document.getElementById("adminModal");
-    var botonAdmin = document.getElementById("botonAdmin");
-    var span = document.getElementsByClassName("close")[0];
-    var productosContainer = document.getElementById("productos-container");
-    var productosAgregados = document.getElementById("productos-agregados");
+    const modal = document.getElementById("adminModal");
+    const botonAdmin = document.getElementById("botonAdmin");
+    const span = document.getElementsByClassName("close")[0];
+    const productosContainer = document.getElementById("productos-container");
+    const productosAgregados = document.getElementById("productos-agregados");
+    const selectorCategoria = document.getElementById("selector-categoria");
 
-    var productos = JSON.parse(localStorage.getItem("productos")) || [];
+    let productos = JSON.parse(localStorage.getItem("productos")) || [];
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    let categoriaSeleccionada = "todas";
 
-    botonAdmin.onclick = function() {
-      modal.style.display = "block";
-    }
+    botonAdmin.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 
-    span.onclick = function() {
-      modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-
-    document.getElementById("formulario-producto").addEventListener("submit", function(event) {
+    document.getElementById("formulario-producto").addEventListener("submit", function (event) {
       event.preventDefault();
-      var nombre = document.getElementById("nombreProducto").value;
-      var precio = document.getElementById("precioProducto").value;
-      var imagen = document.getElementById("imagenProducto").files[0];
-      var categoria = document.getElementById("categoriaProducto").value;
+      const nombre = document.getElementById("nombreProducto").value;
+      const precio = document.getElementById("precioProducto").value;
+      const categoria = document.getElementById("categoriaProducto").value;
+      const imagen = document.getElementById("imagenProducto").files[0];
 
       if (imagen) {
-        var reader = new FileReader();
-        reader.onloadend = function() {
-          var nuevoProducto = {
-            nombre: nombre,
-            precio: precio,
-            imagen: reader.result,
-            categoria: categoria
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const nuevoProducto = {
+            nombre, precio, categoria, imagen: reader.result
           };
           productos.push(nuevoProducto);
           localStorage.setItem("productos", JSON.stringify(productos));
@@ -260,43 +250,67 @@
 
     function actualizarVista() {
       productosContainer.innerHTML = '';
-      productos.forEach((producto, index) => {
-        var productoHTML = `
-          <div class="producto-tarjeta" data-categoria="${producto.categoria}">
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
+      productosAgregados.innerHTML = '';
+      actualizarSelectorCategorias();
+
+      const productosFiltrados = categoriaSeleccionada === "todas"
+        ? productos
+        : productos.filter(p => p.categoria === categoriaSeleccionada);
+
+      productosFiltrados.forEach((producto, index) => {
+        const tarjeta = `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
+            <div class="producto-categoria">${producto.categoria}</div>
             <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
-          </div>
-        `;
-        productosContainer.innerHTML += productoHTML;
+          </div>`;
+        productosContainer.innerHTML += tarjeta;
+      });
+
+      productos.forEach((producto, index) => {
+        productosAgregados.innerHTML += `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" class="producto-imagen">
+            <div class="producto-nombre">${producto.nombre}</div>
+            <div class="producto-precio">$${producto.precio}</div>
+            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
+          </div>`;
       });
     }
 
-    var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    function actualizarSelectorCategorias() {
+      const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
+      selectorCategoria.innerHTML = categorias.map(cat => 
+        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
+    }
 
     function agregarAlCarrito(index) {
-      var producto = productos[index];
-      carrito.push(producto);
+      carrito.push(productos[index]);
       localStorage.setItem("carrito", JSON.stringify(carrito));
       actualizarCarrito();
     }
 
     function actualizarCarrito() {
-      var listaCarrito = document.getElementById("lista-carrito");
+      const listaCarrito = document.getElementById("lista-carrito");
       listaCarrito.innerHTML = '';
-      var total = 0;
-      carrito.forEach(producto => {
-        var li = document.createElement("li");
-        li.textContent = `${producto.nombre} - $${producto.precio}`;
-        listaCarrito.appendChild(li);
-        total += parseFloat(producto.precio);
+      let total = 0;
+      carrito.forEach(p => {
+        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
+        total += parseFloat(p.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
     }
 
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      localStorage.setItem("productos", JSON.stringify(productos));
+      actualizarVista();
+    }
+
     function comprar() {
-      if (carrito.length > 0) {
+      if (carrito.length) {
         alert("¡Gracias por tu compra!");
         carrito = [];
         localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -306,8 +320,31 @@
       }
     }
 
+    function filtrarCategoria() {
+      categoriaSeleccionada = selectorCategoria.value;
+      actualizarVista();
+    }
+
+    function cambiarLogo() {
+      const input = document.getElementById("logoInput").files[0];
+      if (input) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          document.getElementById("company-logo").src = reader.result;
+          localStorage.setItem("logoEmpresa", reader.result);
+        };
+        reader.readAsDataURL(input);
+      }
+    }
+
+    function cargarLogoGuardado() {
+      const logo = localStorage.getItem("logoEmpresa");
+      if (logo) document.getElementById("company-logo").src = logo;
+    }
+
     actualizarVista();
     actualizarCarrito();
+    cargarLogoGuardado();
   </script>
 </body>
 </html>
