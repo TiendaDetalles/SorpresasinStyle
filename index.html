@@ -182,6 +182,41 @@
     </section>
   </main>
 
+  <!-- Modal de Administración -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Panel de Administración</h2>
+      <button class="admin-button">Gestionar Productos</button>
+      <button class="admin-button">Gestionar Pedidos</button>
+      <button class="admin-button">Ver Estadísticas</button>
+    </div>
+  </div>
+
   <button id="botonAdmin">⚙️</button>
+
+  <script>
+    // Obtener los elementos
+    var modal = document.getElementById("adminModal");
+    var botonAdmin = document.getElementById("botonAdmin");
+    var span = document.getElementsByClassName("close")[0];
+
+    // Cuando el usuario haga clic en el botón, mostrar el modal
+    botonAdmin.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // Cuando el usuario haga clic en "x", cerrar el modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // Cuando el usuario haga clic fuera del modal, también cerrarlo
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
 </body>
 </html>
