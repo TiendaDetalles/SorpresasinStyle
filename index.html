@@ -243,16 +243,19 @@
       this.reset();
     });
 
-    // Función mejorada para convertir URLs de Google Drive
+    // FUNCIÓN MEJORADA PARA ENLACES DE GOOGLE DRIVE
     function convertGoogleDriveUrl(url) {
-      let fileId;
-      let match1 = url.match(/\/file\/d\/([^\/]+)\//);
-      let match2 = url.match(/[?&]id=([^&]+)/);
-      let match3 = url.match(/\/uc\?id=([^&]+)/);
+      let fileId = null;
+      const match1 = url.match(/\/file\/d\/([^\/]+)\//);
+      const match2 = url.match(/[?&]id=([^&]+)/);
+      const match3 = url.match(/\/uc\?id=([^&]+)/);
+
       if (url.includes('/folders/')) return '';
+
       if (match1) fileId = match1[1];
       else if (match2) fileId = match2[1];
       else if (match3) fileId = match3[1];
+
       return fileId ? https://drive.google.com/uc?export=view&id=${fileId} : url;
     }
 
