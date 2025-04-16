@@ -243,13 +243,17 @@
       this.reset();
     });
 
-    // Utility function to convert Google Drive URLs to direct access URLs
+    // Función mejorada para convertir URLs de Google Drive
     function convertGoogleDriveUrl(url) {
-      const match = url.match(/\/d\/(.*?)\//);
-      if (match && match[1]) {
-        return `https://drive.google.com/uc?id=${match[1]}`;
-      }
-      return url; // Return the original URL if it doesn't match the expected pattern
+      let fileId;
+      let match1 = url.match(/\/file\/d\/([^\/]+)\//);
+      let match2 = url.match(/[?&]id=([^&]+)/);
+      let match3 = url.match(/\/uc\?id=([^&]+)/);
+      if (url.includes('/folders/')) return '';
+      if (match1) fileId = match1[1];
+      else if (match2) fileId = match2[1];
+      else if (match3) fileId = match3[1];
+      return fileId ? https://drive.google.com/uc?export=view&id=${fileId} : url;
     }
 
     function actualizarVista() {
@@ -291,7 +295,7 @@
     function actualizarSelectorCategorias() {
       const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
       selectorCategoria.innerHTML = categorias.map(cat => 
-        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
+        <option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>).join('');
     }
 
     function agregarAlCarrito(index) {
@@ -305,7 +309,7 @@
       listaCarrito.innerHTML = '';
       let total = 0;
       carrito.forEach(p => {
-        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
+        listaCarrito.innerHTML += <li>${p.nombre} - $${p.precio}</li>;
         total += parseFloat(p.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
