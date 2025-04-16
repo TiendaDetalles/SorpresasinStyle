@@ -69,9 +69,9 @@
       padding: 10px;
       background-color: #ffb6c1;
       border: none;
-      border-radius: 5px;
+      border-radius: 50%;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 18px;
     }
 
     #carrito {
@@ -211,8 +211,8 @@
     var productosContainer = document.getElementById("productos-container");
     var productosAgregados = document.getElementById("productos-agregados");
 
-    // Datos de los productos
-    var productos = [];
+    // Datos de los productos en LocalStorage
+    var productos = JSON.parse(localStorage.getItem("productos")) || [];
 
     // Mostrar el modal de administración
     botonAdmin.onclick = function() {
@@ -249,6 +249,7 @@
           };
           productos.push(nuevoProducto);
           actualizarVista();
+          localStorage.setItem("productos", JSON.stringify(productos)); // Guardar en LocalStorage
         };
         reader.readAsDataURL(imagen);
       }
@@ -265,7 +266,7 @@
             <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
-            <button class="producto-boton" onclick="agregarAlCarrito(${index})">Agregar al carrito</button>
+            <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
           </div>
         `;
         productosContainer.innerHTML += productoHTML;
@@ -285,11 +286,12 @@
     }
 
     // Función para agregar al carrito
-    var carrito = [];
+    var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     function agregarAlCarrito(index) {
       var producto = productos[index];
       carrito.push(producto);
       actualizarCarrito();
+      localStorage.setItem("carrito", JSON.stringify(carrito)); // Guardar en LocalStorage
     }
 
     function actualizarCarrito() {
@@ -309,6 +311,7 @@
     function eliminarProducto(index) {
       productos.splice(index, 1);
       actualizarVista();
+      localStorage.setItem("productos", JSON.stringify(productos)); // Actualizar LocalStorage
     }
 
     // Función para editar producto
@@ -319,6 +322,7 @@
         productos[index].nombre = nuevoNombre;
         productos[index].precio = nuevoPrecio;
         actualizarVista();
+        localStorage.setItem("productos", JSON.stringify(productos)); // Actualizar LocalStorage
       }
     }
 
@@ -328,10 +332,16 @@
         alert("Gracias por tu compra!");
         carrito = [];
         actualizarCarrito();
+        localStorage.setItem("carrito", JSON.stringify(carrito)); // Limpiar carrito en LocalStorage
       } else {
         alert("Tu carrito está vacío.");
       }
     }
+
+    // Inicializar vista
+    actualizarVista();
+    actualizarCarrito();
+
   </script>
 </body>
 </html>
