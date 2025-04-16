@@ -33,18 +33,18 @@
     }
 
     #productos-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 12px;
       padding: 20px;
+      justify-items: center;
     }
 
     .producto-tarjeta {
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 12px;
-      width: 160px;
+      width: 150px;
       text-align: center;
       background-color: white;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -156,10 +156,9 @@
       cursor: pointer;
     }
 
-    @media screen and (max-width: 600px) {
-      .producto-tarjeta {
-        width: 45%;
-      }
+    .input-edit {
+      width: 100%;
+      margin: 5px 0;
     }
   </style>
 </head>
@@ -191,10 +190,10 @@
       <span class="close">&times;</span>
       <h2>Panel de Administración</h2>
       <form id="formulario-producto">
-        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required><br><br>
-        <input type="number" id="precioProducto" placeholder="Precio" required><br><br>
-        <input type="text" id="categoriaProducto" placeholder="Categoría" required><br><br>
-        <input type="file" id="imagenProducto" accept="image/*" required><br><br>
+        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required class="input-edit">
+        <input type="number" id="precioProducto" placeholder="Precio" required class="input-edit">
+        <input type="text" id="categoriaProducto" placeholder="Categoría" required class="input-edit">
+        <input type="file" id="imagenProducto" accept="image/*" required class="input-edit">
         <button type="submit" class="admin-button">Agregar Desayuno</button>
       </form>
       <hr>
@@ -202,7 +201,7 @@
       <div id="productos-agregados"></div>
       <hr>
       <h3>Cambiar Logo</h3>
-      <input type="file" id="logoInput" accept="image/*" />
+      <input type="file" id="logoInput" accept="image/*" class="input-edit"/>
       <button onclick="cambiarLogo()" class="admin-button">Cambiar Logo</button>
     </div>
   </div>
@@ -273,8 +272,10 @@
         productosAgregados.innerHTML += `
           <div class="producto-tarjeta">
             <img src="${producto.imagen}" class="producto-imagen">
-            <div class="producto-nombre">${producto.nombre}</div>
-            <div class="producto-precio">$${producto.precio}</div>
+            <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
+            <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
+            <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
+            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
             <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
           </div>`;
       });
@@ -307,6 +308,25 @@
       productos.splice(index, 1);
       localStorage.setItem("productos", JSON.stringify(productos));
       actualizarVista();
+    }
+
+    function editarProducto(index, campo, valor) {
+      productos[index][campo] = valor;
+      localStorage.setItem("productos", JSON.stringify(productos));
+      actualizarVista();
+    }
+
+    function editarImagen(index, input) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          productos[index].imagen = reader.result;
+          localStorage.setItem("productos", JSON.stringify(productos));
+          actualizarVista();
+        };
+        reader.readAsDataURL(file);
+      }
     }
 
     function comprar() {
