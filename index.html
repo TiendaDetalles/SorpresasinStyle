@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Sorpresas in Style</title>
   <style>
     body {
@@ -13,10 +12,15 @@
     }
 
     header {
-      background-color: #66e0d4;
+      background-color: #ffb6c1;
       padding: 1em;
       text-align: center;
-      color: white;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
     }
 
     #company-logo {
@@ -26,66 +30,42 @@
       object-fit: cover;
     }
 
-    #filtro-categoria {
-      margin: 20px auto 0;
-      display: flex;
-      justify-content: center;
-    }
-
     #productos-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       padding: 20px;
-      justify-items: center;
     }
 
-    .producto-tarjeta {
+    .producto-tarjeta, .producto {
       border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 12px;
-      width: 150px;
+      padding: 16px;
+      margin: 16px;
       text-align: center;
-      background-color: white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      position: relative;
+      width: 200px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .producto-tarjeta:hover, .producto:hover {
+      transform: translateY(-5px);
     }
 
     .producto-imagen {
       width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 6px;
+      height: auto;
+      border-radius: 8px;
     }
 
     .producto-nombre {
-      font-size: 14px;
-      margin: 6px 0;
-      color: #333;
+      font-size: 18px;
+      margin: 8px 0;
     }
 
     .producto-precio {
-      font-size: 13px;
-      color: #666;
-    }
-
-    .producto-categoria {
-      font-size: 12px;
-      color: #999;
-    }
-
-    .producto-boton {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background-color: #007acc;
-      border: none;
-      border-radius: 50%;
-      color: white;
-      width: 30px;
-      height: 30px;
       font-size: 16px;
-      cursor: pointer;
+      color: #333;
     }
 
     #carrito {
@@ -95,22 +75,21 @@
     }
 
     #botonAdmin {
+      display: none; /* Ocultar por defecto */
       position: fixed;
       bottom: 20px;
       right: 20px;
       font-size: 24px;
-      background: #007acc;
-      color: white;
+      background: none;
       border: none;
-      padding: 10px;
-      border-radius: 50%;
       cursor: pointer;
     }
 
+    /* Estilos para los modales */
     .modal {
       display: none;
       position: fixed;
-      z-index: 10;
+      z-index: 1;
       left: 0;
       top: 0;
       width: 100%;
@@ -121,13 +100,14 @@
     }
 
     .modal-content {
-      background-color: #fff;
-      margin: auto;
+      background-color: #fefefe;
+      margin: 5% auto;
       padding: 20px;
       border: 1px solid #888;
-      width: 90%;
+      width: 50%;
       max-width: 400px;
       position: relative;
+      cursor: move;
     }
 
     .close {
@@ -140,25 +120,27 @@
     .close:hover,
     .close:focus {
       color: black;
+      text-decoration: none;
       cursor: pointer;
     }
 
     .admin-button {
       display: block;
-      width: 100%;
       margin: 10px 0;
       padding: 10px;
-      background-color: #66e0d4;
+      background-color: #ffb6c1;
       border: none;
       border-radius: 5px;
-      font-size: 16px;
-      color: white;
       cursor: pointer;
+      font-size: 16px;
     }
 
-    .input-edit {
-      width: 100%;
-      margin: 5px 0;
+    .cart-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -166,205 +148,30 @@
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
+    <nav>
+      <a href="#">Inicio</a>
+    </nav>
   </header>
-
-  <div id="filtro-categoria">
-    <select id="selector-categoria" onchange="filtrarCategoria()">
-      <option value="todas">Todas las categorías</option>
-    </select>
-  </div>
 
   <main>
     <section id="productos-container"></section>
+
     <section id="carrito">
       <h2>Carrito de Compras</h2>
       <ul id="lista-carrito"></ul>
       <p>Total: $<span id="total">0</span></p>
-      <button onclick="comprar()">Comprar</button>
+      <button onclick="comprar()">
+        <img src="data:image/png;base64,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" alt="Carrito de Compras" style="width: 50px; height: auto;">
+      </button>
     </section>
   </main>
 
-  <!-- Modal -->
+  <button id="botonAdmin" onclick="openAdminModal()">⚙️</button>
+
+  <!-- Modal Principal de Administración -->
   <div id="adminModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
+    <div class="modal-content" id="adminModalContent">
+      <span class="close" onclick="closeModal('adminModal')">&times;</span>
       <h2>Panel de Administración</h2>
-      <form id="formulario-producto">
-        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required class="input-edit">
-        <input type="number" id="precioProducto" placeholder="Precio" required class="input-edit">
-        <input type="text" id="categoriaProducto" placeholder="Categoría" required class="input-edit">
-        <input type="file" id="imagenProducto" accept="image/*" required class="input-edit">
-        <button type="submit" class="admin-button">Agregar Desayuno</button>
-      </form>
-      <hr>
-      <h3>Desayunos Agregados</h3>
-      <div id="productos-agregados"></div>
-      <hr>
-      <h3>Cambiar Logo</h3>
-      <input type="file" id="logoInput" accept="image/*" class="input-edit"/>
-      <button onclick="cambiarLogo()" class="admin-button">Cambiar Logo</button>
-    </div>
-  </div>
-
-  <button id="botonAdmin">⚙️</button>
-
-  <script>
-    const modal = document.getElementById("adminModal");
-    const botonAdmin = document.getElementById("botonAdmin");
-    const span = document.getElementsByClassName("close")[0];
-    const productosContainer = document.getElementById("productos-container");
-    const productosAgregados = document.getElementById("productos-agregados");
-    const selectorCategoria = document.getElementById("selector-categoria");
-
-    let productos = JSON.parse(localStorage.getItem("productos")) || [];
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    let categoriaSeleccionada = "todas";
-
-    botonAdmin.onclick = () => modal.style.display = "block";
-    span.onclick = () => modal.style.display = "none";
-    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
-
-    document.getElementById("formulario-producto").addEventListener("submit", function (event) {
-      event.preventDefault();
-      const nombre = document.getElementById("nombreProducto").value;
-      const precio = document.getElementById("precioProducto").value;
-      const categoria = document.getElementById("categoriaProducto").value;
-      const imagen = document.getElementById("imagenProducto").files[0];
-
-      if (imagen) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const nuevoProducto = {
-            nombre, precio, categoria, imagen: reader.result
-          };
-          productos.push(nuevoProducto);
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
-        };
-        reader.readAsDataURL(imagen);
-      }
-
-      this.reset();
-    });
-
-    function actualizarVista() {
-      productosContainer.innerHTML = '';
-      productosAgregados.innerHTML = '';
-      actualizarSelectorCategorias();
-
-      const productosFiltrados = categoriaSeleccionada === "todas"
-        ? productos
-        : productos.filter(p => p.categoria === categoriaSeleccionada);
-
-      productosFiltrados.forEach((producto, index) => {
-        const tarjeta = `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
-            <div class="producto-nombre">${producto.nombre}</div>
-            <div class="producto-precio">$${producto.precio}</div>
-            <div class="producto-categoria">${producto.categoria}</div>
-            <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
-          </div>`;
-        productosContainer.innerHTML += tarjeta;
-      });
-
-      productos.forEach((producto, index) => {
-        productosAgregados.innerHTML += `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
-            <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
-            <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
-            <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
-            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
-            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
-          </div>`;
-      });
-    }
-
-    function actualizarSelectorCategorias() {
-      const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
-      selectorCategoria.innerHTML = categorias.map(cat => 
-        <option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>).join('');
-    }
-
-    function agregarAlCarrito(index) {
-      carrito.push(productos[index]);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
-      actualizarCarrito();
-    }
-
-    function actualizarCarrito() {
-      const listaCarrito = document.getElementById("lista-carrito");
-      listaCarrito.innerHTML = '';
-      let total = 0;
-      carrito.forEach(p => {
-        listaCarrito.innerHTML += <li>${p.nombre} - $${p.precio}</li>;
-        total += parseFloat(p.precio);
-      });
-      document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function eliminarProducto(index) {
-      productos.splice(index, 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
-    }
-
-    function editarProducto(index, campo, valor) {
-      productos[index][campo] = valor;
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
-    }
-
-    function editarImagen(index, input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          productos[index].imagen = reader.result;
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function comprar() {
-      if (carrito.length) {
-        alert("¡Gracias por tu compra!");
-        carrito = [];
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-        actualizarCarrito();
-      } else {
-        alert("Tu carrito está vacío.");
-      }
-    }
-
-    function filtrarCategoria() {
-      categoriaSeleccionada = selectorCategoria.value;
-      actualizarVista();
-    }
-
-    function cambiarLogo() {
-      const input = document.getElementById("logoInput").files[0];
-      if (input) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          document.getElementById("company-logo").src = reader.result;
-          localStorage.setItem("logoEmpresa", reader.result);
-        };
-        reader.readAsDataURL(input);
-      }
-    }
-
-    function cargarLogoGuardado() {
-      const logo = localStorage.getItem("logoEmpresa");
-      if (logo) document.getElementById("company-logo").src = logo;
-    }
-
-    actualizarVista();
-    actualizarCarrito();
-    cargarLogoGuardado();
-  </script>
-</body>
-</html>
+      <button class="admin-button" onclick="openModal('logoModal')">Cambiar Logo</button>
+      <button class="admin-button" onclick="openModal('producto…
