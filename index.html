@@ -167,60 +167,6 @@
       }
     }
   </style>
-
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
-      authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
-      databaseURL: "https://sorpresasinstyle-2664b-default-rtdb.firebaseio.com",
-      projectId: "sorpresasinstyle-2664b",
-      storageBucket: "sorpresasinstyle-2664b.firebasestorage.app",
-      messagingSenderId: "615713402015",
-      appId: "1:615713402015:web:74bcd71e0a22f3815c06aa",
-      measurementId: "G-82WQ2NKVLQ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const analytics = getAnalytics(app);
-
-    // Función para obtener los productos desde Firebase
-    function obtenerProductos() {
-      const dbRef = ref(database, 'productos/');
-      get(dbRef).then((snapshot) => {
-        if (snapshot.exists()) {
-          const productosData = snapshot.val();
-          productos = Object.values(productosData);
-          actualizarVista();
-        } else {
-          console.log("No se encontraron productos.");
-        }
-      }).catch((error) => {
-        console.error("Error al obtener los productos:", error);
-      });
-    }
-
-    // Función para guardar los productos en Firebase
-    function guardarProductos() {
-      const dbRef = ref(database, 'productos/');
-      set(dbRef, productos)
-        .then(() => {
-          console.log("Productos guardados en Firebase.");
-        })
-        .catch((error) => {
-          console.error("Error al guardar productos:", error);
-        });
-    }
-
-    // Llama a obtener los productos al cargar la página
-    obtenerProductos();
-  </script>
-
 </head>
 <body>
   <header>
@@ -268,22 +214,42 @@
 
   <button id="botonAdmin">⚙️</button>
 
-  <script>
-    const modal = document.getElementById("adminModal");
-    const botonAdmin = document.getElementById("botonAdmin");
-    const span = document.getElementsByClassName("close")[0];
-    const productosContainer = document.getElementById("productos-container");
-    const productosAgregados = document.getElementById("productos-agregados");
-    const selectorCategoria = document.getElementById("selector-categoria");
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
 
-    let productos = []; // Este es ahora el array sincronizado con Firebase
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    let categoriaSeleccionada = "todas";
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
+      authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
+      databaseURL: "https://sorpresasinstyle-2664b-default-rtdb.firebaseio.com",
+      projectId: "sorpresasinstyle-2664b",
+      storageBucket: "sorpresasinstyle-2664b.firebasestorage.app",
+      messagingSenderId: "615713402015",
+      appId: "1:615713402015:web:74bcd71e0a22f3815c06aa",
+      measurementId: "G-82WQ2NKVLQ"
+    };
 
-    botonAdmin.onclick = () => modal.style.display = "block";
-    span.onclick = () => modal.style.display = "none";
-    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const analytics = getAnalytics(app);
 
+    let productos = [];
+
+    // Cargar productos desde Firebase
+    const productosRef = ref(database, 'productos');
+    onValue(productosRef, (snapshot) => {
+      if (snapshot.exists()) {
+        productos = Object.values(snapshot.val());
+        localStorage.setItem("productos", JSON.stringify(productos));
+        actualizarVista();
+      } else {
+        console.log("No hay productos disponibles.");
+      }
+    });
+
+    // Al agregar un producto
     document.getElementById("formulario-producto").addEventListener("submit", function (event) {
       event.preventDefault();
       const nombre = document.getElementById("nombreProducto").value;
@@ -297,9 +263,8 @@
           const nuevoProducto = {
             nombre, precio, categoria, imagen: reader.result
           };
-          productos.push(nuevoProducto);
-          guardarProductos();  // Sincroniza con Firebase
-          actualizarVista();
+          const nuevoProductoRef = push(ref(database, 'productos'), nuevoProducto);
+          console.log('Producto agregado:', nuevoProducto); // Verifica que el producto se está guardando.
         };
         reader.readAsDataURL(imagen);
       }
@@ -308,123 +273,26 @@
     });
 
     function actualizarVista() {
+      const productosContainer = document.getElementById("productos-container");
       productosContainer.innerHTML = '';
-      productosAgregados.innerHTML = '';
-      actualizarSelectorCategorias();
-
-      const productosFiltrados = categoriaSeleccionada === "todas"
-        ? productos
-        : productos.filter(p => p.categoria === categoriaSeleccionada);
-
-      productosFiltrados.forEach((producto, index) => {
+      productos.forEach(producto => {
         const tarjeta = `
           <div class="producto-tarjeta">
             <img src="${producto.imagen}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <div class="producto-categoria">${producto.categoria}</div>
-            <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
+            <button class="producto-boton" onclick="agregarAlCarrito(${producto.nombre})">🛒</button>
           </div>`;
         productosContainer.innerHTML += tarjeta;
       });
-
-      productos.forEach((producto, index) => {
-        productosAgregados.innerHTML += `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
-            <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
-            <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
-            <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
-            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
-            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
-          </div>`;
-      });
     }
 
-    function actualizarSelectorCategorias() {
-      const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
-      selectorCategoria.innerHTML = categorias.map(cat => 
-        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
+    function agregarAlCarrito(nombre) {
+      const producto = productos.find(p => p.nombre === nombre);
+      console.log("Producto añadido al carrito:", producto);
     }
-
-    function agregarAlCarrito(index) {
-      carrito.push(productos[index]);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
-      actualizarCarrito();
-    }
-
-    function actualizarCarrito() {
-      const listaCarrito = document.getElementById("lista-carrito");
-      listaCarrito.innerHTML = '';
-      let total = 0;
-      carrito.forEach(p => {
-        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
-        total += parseFloat(p.precio);
-      });
-      document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function eliminarProducto(index) {
-      productos.splice(index, 1);
-      guardarProductos();  // Sincroniza con Firebase
-      actualizarVista();
-    }
-
-    function editarProducto(index, campo, valor) {
-      productos[index][campo] = valor;
-      guardarProductos();  // Sincroniza con Firebase
-      actualizarVista();
-    }
-
-    function editarImagen(index, input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          productos[index].imagen = reader.result;
-          guardarProductos();  // Sincroniza con Firebase
-          actualizarVista();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function comprar() {
-      if (carrito.length) {
-        alert("¡Gracias por tu compra!");
-        carrito = [];
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-        actualizarCarrito();
-      } else {
-        alert("Tu carrito está vacío.");
-      }
-    }
-
-    function filtrarCategoria() {
-      categoriaSeleccionada = selectorCategoria.value;
-      actualizarVista();
-    }
-
-    function cambiarLogo() {
-      const input = document.getElementById("logoInput").files[0];
-      if (input) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          document.getElementById("company-logo").src = reader.result;
-          localStorage.setItem("logoEmpresa", reader.result);
-        };
-        reader.readAsDataURL(input);
-      }
-    }
-
-    function cargarLogoGuardado() {
-      const logo = localStorage.getItem("logoEmpresa");
-      if (logo) document.getElementById("company-logo").src = logo;
-    }
-
-    actualizarVista();
-    actualizarCarrito();
-    cargarLogoGuardado();
   </script>
+
 </body>
 </html>
