@@ -3,90 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sorpresas in Style</title>
+  <title>Acceso al Panel de Administración</title>
   <style>
+    /* Estilos generales */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
+      background-color: #f4f4f4;
     }
-
-    header {
-      background-color: #ffb6c1;
-      padding: 1em;
-      text-align: center;
-    }
-
-    nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #333;
-    }
-
-    #company-logo {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    #productos-container {
+    
+    .container {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
     }
 
-    .producto-tarjeta, .producto {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 16px;
-      margin: 16px;
-      text-align: center;
-      width: 200px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s;
-    }
-
-    .producto-tarjeta:hover, .producto:hover {
-      transform: translateY(-5px);
-    }
-
-    .producto-imagen {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-    .producto-nombre {
-      font-size: 18px;
-      margin: 8px 0;
-    }
-
-    .producto-precio {
-      font-size: 16px;
-      color: #333;
-    }
-
-    #carrito {
-      padding: 20px;
-      background-color: #fff;
-      border-top: 1px solid #ddd;
-    }
-
-    #botonAdmin {
-      display: none; /* Ocultar por defecto */
+    .button-container {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      font-size: 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
+      z-index: 1000; /* Asegura que el botón esté encima de otros elementos */
     }
 
-    /* Estilos para los modales */
+    .admin-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .admin-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Estilo del modal */
     .modal {
       display: none;
       position: fixed;
@@ -97,149 +54,110 @@
       background-color: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
-      z-index: 10;
+      z-index: 1001; /* Asegura que el modal se muestre encima de todo */
     }
 
     .modal-content {
-      background-color: white;
+      background-color: #fff;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       width: 80%;
-      max-width: 500px;
+      max-width: 400px;
     }
 
-    /* Responsivo: para pantallas pequeñas y móviles */
+    .close-btn {
+      background-color: red;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      float: right;
+    }
+
+    .input-container {
+      margin-bottom: 20px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #218838;
+    }
+
+    /* Responsividad */
     @media (max-width: 768px) {
-      header {
-        padding: 0.5em;
-      }
-
-      #productos-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .producto-tarjeta, .producto {
-        width: 90%;
-        margin: 10px 0;
-      }
-
-      #carrito {
-        padding: 10px;
-      }
-
-      #botonAdmin {
-        font-size: 20px;
-        bottom: 10px;
-        right: 10px;
-      }
-    }
-
-    /* Responsivo: para pantallas muy pequeñas (móviles más pequeños) */
-    @media (max-width: 480px) {
-      header {
+      .admin-btn {
         font-size: 14px;
-      }
-
-      .producto-nombre {
-        font-size: 16px;
-      }
-
-      .producto-precio {
-        font-size: 14px;
-      }
-    }
-
-    /* Responsivo: para pantallas medianas (tabletas) */
-    @media (max-width: 1024px) {
-      .producto-tarjeta, .producto {
-        width: 45%;
+        padding: 12px 24px;
       }
     }
   </style>
 </head>
 <body>
-  <header>
-    <img id="company-logo" src="logo.png" alt="Logo de la Empresa">
-    <h1>Sorpresas in Style</h1>
-    <nav>
-      <a href="#productos">Productos</a>
-      <a href="#carrito">Carrito</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
-  </header>
 
-  <section id="productos-container">
-    <div class="producto-tarjeta">
-      <img class="producto-imagen" src="producto1.jpg" alt="Producto 1">
-      <div class="producto-nombre">Producto 1</div>
-      <div class="producto-precio">$20.00</div>
-    </div>
-    <div class="producto-tarjeta">
-      <img class="producto-imagen" src="producto2.jpg" alt="Producto 2">
-      <div class="producto-nombre">Producto 2</div>
-      <div class="producto-precio">$30.00</div>
-    </div>
-    <!-- Agrega más productos aquí -->
-  </section>
-
-  <section id="carrito">
-    <h2>Tu Carrito</h2>
-    <p>No has agregado productos al carrito.</p>
-  </section>
-
-  <button id="botonAdmin" onclick="verificarClave()">Admin</button>
-
-  <!-- Modal de Admin -->
-  <div class="modal" id="modalAdmin">
-    <div class="modal-content">
-      <span onclick="cerrarModalAdmin()" style="cursor:pointer;">Cerrar</span>
-      <h2>Panel de Administración</h2>
-      <!-- Agregar contenido de admin aquí -->
-    </div>
+  <div class="container">
+    <h1>Bienvenido a la Página</h1>
+    <p>Contenido visible para todos los usuarios</p>
   </div>
 
-  <!-- Modal para ingresar la clave -->
-  <div class="modal" id="modalClave">
+  <!-- Botón para abrir el modal -->
+  <div class="button-container">
+    <button class="admin-btn" onclick="openModal()">Acceder al Admin</button>
+  </div>
+
+  <!-- Modal -->
+  <div id="adminModal" class="modal">
     <div class="modal-content">
-      <h2>Ingresa la clave de administrador</h2>
-      <input type="password" id="claveAdmin" placeholder="Clave">
-      <button onclick="verificarClaveCorrecta()">Ingresar</button>
-      <span onclick="cerrarModalClave()" style="cursor:pointer;">Cerrar</span>
+      <button class="close-btn" onclick="closeModal()">X</button>
+      <h2>Acceso al Panel de Administración</h2>
+      <div class="input-container">
+        <label for="admin-password">Contraseña:</label>
+        <input type="password" id="admin-password" placeholder="Ingrese la contraseña">
+      </div>
+      <button type="submit" onclick="verifyPassword()">Acceder</button>
     </div>
   </div>
 
   <script>
-    // Función para verificar si la clave es correcta antes de abrir el modal de admin
-    function verificarClave() {
-      document.getElementById('modalClave').style.display = 'flex';
+    // Función para abrir el modal
+    function openModal() {
+      document.getElementById("adminModal").style.display = "flex";
     }
 
-    // Función para verificar si la clave ingresada es correcta
-    function verificarClaveCorrecta() {
-      const claveIngresada = document.getElementById('claveAdmin').value;
-      if (claveIngresada === '1234') {
-        abrirModalAdmin();
-        cerrarModalClave();
+    // Función para cerrar el modal
+    function closeModal() {
+      document.getElementById("adminModal").style.display = "none";
+    }
+
+    // Función para verificar la contraseña
+    function verifyPassword() {
+      const password = document.getElementById("admin-password").value;
+      if (password === "1234") {
+        alert("¡Acceso concedido al panel de administración!");
+        // Redirigir al panel de administración o mostrar contenido relevante
       } else {
-        alert('Clave incorrecta. Intenta nuevamente.');
+        alert("Contraseña incorrecta. Intenta nuevamente.");
       }
     }
-
-    // Función para abrir el modal de admin
-    function abrirModalAdmin() {
-      document.getElementById('modalAdmin').style.display = 'flex';
-    }
-
-    // Función para cerrar el modal de admin
-    function cerrarModalAdmin() {
-      document.getElementById('modalAdmin').style.display = 'none';
-    }
-
-    // Función para cerrar el modal de la clave
-    function cerrarModalClave() {
-      document.getElementById('modalClave').style.display = 'none';
-    }
   </script>
+
 </body>
 </html>
