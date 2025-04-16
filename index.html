@@ -2,162 +2,192 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <title>Sorpresas in Style</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acceso al Panel de Administración</title>
   <style>
-    /* Estilos generales */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
-    }
-    
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      background-color: #f4f4f9;
     }
 
-    .button-container {
+    header {
+      background-color: #ffb6c1;
+      padding: 1em;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    #company-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    #productos-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .producto-tarjeta, .producto {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px;
+      text-align: center;
+      width: 200px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .producto-tarjeta:hover, .producto:hover {
+      transform: translateY(-5px);
+    }
+
+    .producto-imagen {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .producto-nombre {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    .producto-precio {
+      font-size: 16px;
+      color: #333;
+    }
+
+    #carrito {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
+    }
+
+    #botonAdmin {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 1000; /* Asegura que el botón esté encima de otros elementos */
-    }
-
-    .admin-btn {
-      background-color: #007bff;
-      color: white;
-      padding: 15px 30px;
       font-size: 16px;
+      background-color: #ffb6c1;
       border: none;
-      border-radius: 50px;
+      border-radius: 8px;
+      padding: 10px 15px;
+      color: #fff;
       cursor: pointer;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
-    .admin-btn:hover {
-      background-color: #0056b3;
+    @media (max-width: 600px) {
+      .producto-tarjeta, .producto {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      #botonAdmin {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
     }
 
-    /* Estilo del modal */
+    /* Estilos para los modales */
     .modal {
       display: none;
       position: fixed;
-      top: 0;
+      z-index: 1;
       left: 0;
+      top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1001; /* Asegura que el modal se muestre encima de todo */
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
     }
 
     .modal-content {
-      background-color: #fff;
+      background-color: #fefefe;
+      margin: 5% auto;
       padding: 20px;
-      border-radius: 10px;
-      width: 80%;
+      border: 1px solid #888;
+      width: 50%;
       max-width: 400px;
+      position: relative;
+      cursor: move;
     }
 
-    .close-btn {
-      background-color: red;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    .close {
+      color: #aaa;
       float: right;
+      font-size: 28px;
+      font-weight: bold;
     }
 
-    .input-container {
-      margin-bottom: 20px;
-    }
-
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
       cursor: pointer;
     }
 
-    button[type="submit"]:hover {
-      background-color: #218838;
+    .admin-button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #ffb6c1;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
     }
 
-    /* Responsividad */
-    @media (max-width: 768px) {
-      .admin-btn {
-        font-size: 14px;
-        padding: 12px 24px;
-      }
+    .cart-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      margin-left: 10px;
     }
   </style>
 </head>
 <body>
+  <header>
+    <img id="company-logo" src="" alt="Logo de la empresa">
+    <h1>Sorpresas in Style</h1>
+    <nav>
+      <a href="#">Inicio</a>
+    </nav>
+  </header>
 
-  <div class="container">
-    <h1>Bienvenido a la Página</h1>
-    <p>Contenido visible para todos los usuarios</p>
-  </div>
+  <main>
+    <section id="productos-container"></section>
 
-  <!-- Botón para abrir el modal -->
-  <div class="button-container">
-    <button class="admin-btn" onclick="openModal()">Acceder al Admin</button>
-  </div>
+    <section id="carrito">
+      <h2>Carrito de Compras</h2>
+      <ul id="lista-carrito"></ul>
+      <p>Total: $<span id="total">0</span></p>
+      <button onclick="comprar()">Comprar</button>
+    </section>
+  </main>
 
-  <!-- Modal -->
-  <div id="adminModal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">X</button>
-      <h2>Acceso al Panel de Administración</h2>
-      <div class="input-container">
-        <label for="admin-password">Contraseña:</label>
-        <input type="password" id="admin-password" placeholder="Ingrese la contraseña">
-      </div>
-      <button type="submit" onclick="verifyPassword()">Acceder</button>
-    </div>
-  </div>
+  <!-- Botón flotante de admin -->
+  <button id="botonAdmin" onclick="window.location.href='admin.html'">Admin</button>
 
   <script>
-    // Función para abrir el modal
-    function openModal() {
-      document.getElementById("adminModal").style.display = "flex";
-    }
-
-    // Función para cerrar el modal
-    function closeModal() {
-      document.getElementById("adminModal").style.display = "none";
-    }
-
-    // Función para verificar la contraseña
-    function verifyPassword() {
-      const password = document.getElementById("admin-password").value;
-      if (password === "1234") {
-        alert("¡Acceso concedido al panel de administración!");
-        // Redirigir al panel de administración o mostrar contenido relevante
-      } else {
-        alert("Contraseña incorrecta. Intenta nuevamente.");
-      }
+    function comprar() {
+      alert("Gracias por su compra!");
     }
   </script>
-
 </body>
 </html>
