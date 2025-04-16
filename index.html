@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sorpresas in Style</title>
   <style>
     body {
@@ -89,358 +90,124 @@
     .modal {
       display: none;
       position: fixed;
-      z-index: 1;
-      left: 0;
       top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-      padding-top: 60px;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
 
     .modal-content {
-      background-color: #fefefe;
-      margin: 5% auto;
+      background-color: white;
       padding: 20px;
-      border: 1px solid #888;
-      width: 50%;
-      max-width: 400px;
-      position: relative;
-      cursor: move;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 500px;
     }
 
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
+    /* Responsivo: para pantallas pequeñas y móviles */
+    @media (max-width: 768px) {
+      header {
+        padding: 0.5em;
+      }
+
+      #productos-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .producto-tarjeta, .producto {
+        width: 90%;
+        margin: 10px 0;
+      }
+
+      #carrito {
+        padding: 10px;
+      }
+
+      #botonAdmin {
+        font-size: 20px;
+        bottom: 10px;
+        right: 10px;
+      }
     }
 
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
+    /* Responsivo: para pantallas muy pequeñas (móviles más pequeños) */
+    @media (max-width: 480px) {
+      header {
+        font-size: 14px;
+      }
+
+      .producto-nombre {
+        font-size: 16px;
+      }
+
+      .producto-precio {
+        font-size: 14px;
+      }
     }
 
-    .admin-button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #ffb6c1;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .cart-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 24px;
-      margin-left: 10px;
+    /* Responsivo: para pantallas medianas (tabletas) */
+    @media (max-width: 1024px) {
+      .producto-tarjeta, .producto {
+        width: 45%;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <img id="company-logo" src="" alt="Logo de la empresa">
+    <img id="company-logo" src="logo.png" alt="Logo de la Empresa">
     <h1>Sorpresas in Style</h1>
     <nav>
-      <a href="#">Inicio</a>
+      <a href="#productos">Productos</a>
+      <a href="#carrito">Carrito</a>
+      <a href="#contacto">Contacto</a>
     </nav>
   </header>
 
-  <main>
-    <section id="productos-container"></section>
+  <section id="productos-container">
+    <div class="producto-tarjeta">
+      <img class="producto-imagen" src="producto1.jpg" alt="Producto 1">
+      <div class="producto-nombre">Producto 1</div>
+      <div class="producto-precio">$20.00</div>
+    </div>
+    <div class="producto-tarjeta">
+      <img class="producto-imagen" src="producto2.jpg" alt="Producto 2">
+      <div class="producto-nombre">Producto 2</div>
+      <div class="producto-precio">$30.00</div>
+    </div>
+    <!-- Agrega más productos aquí -->
+  </section>
 
-    <section id="carrito">
-      <h2>Carrito de Compras</h2>
-      <ul id="lista-carrito"></ul>
-      <p>Total: $<span id="total">0</span></p>
-      <button onclick="comprar()">
-        <img src="data:image/png;base64,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" alt="Carrito de Compras" style="width: 50px; height: auto;">
-      </button>
-    </section>
-  </main>
+  <section id="carrito">
+    <h2>Tu Carrito</h2>
+    <p>No has agregado productos al carrito.</p>
+  </section>
 
-  <button id="botonAdmin" onclick="openAdminModal()">⚙️</button>
+  <button id="botonAdmin" onclick="abrirModalAdmin()">Admin</button>
 
-  <!-- Modal Principal de Administración -->
-  <div id="adminModal" class="modal">
-    <div class="modal-content" id="adminModalContent">
-      <span class="close" onclick="closeModal('adminModal')">&times;</span>
+  <!-- Modal de Admin -->
+  <div class="modal" id="modalAdmin">
+    <div class="modal-content">
+      <span onclick="cerrarModalAdmin()" style="cursor:pointer;">Cerrar</span>
       <h2>Panel de Administración</h2>
-      <button class="admin-button" onclick="openModal('logoModal')">Cambiar Logo</button>
-      <button class="admin-button" onclick="openModal('productosModal')">Gestionar Productos</button>
-      <button class="admin-button" onclick="closeModal('adminModal')">Cerrar</button>
-    </div>
-  </div>
-
-  <!-- Modal para Cambiar Logo -->
-  <div id="logoModal" class="modal">
-    <div class="modal-content" id="logoModalContent">
-      <span class="close" onclick="closeModal('logoModal')">&times;</span>
-      <h3>Actualizar Logo</h3>
-      <input type="file" id="logo-input" accept="image/*">
-      <button onclick="guardarLogo()">Guardar Logo</button>
-      <button class="admin-button" onclick="openModal('adminModal')">Volver</button>
-    </div>
-  </div>
-
-  <!-- Modal para Gestionar Productos -->
-  <div id="productosModal" class="modal">
-    <div class="modal-content" id="productosModalContent">
-      <span class="close" onclick="closeModal('productosModal')">&times;</span>
-      <h3>Agregar Nuevo Producto</h3>
-      <form onsubmit="agregarProducto(event)">
-        <input type="text" id="nombre" placeholder="Nombre del producto" required><br>
-        <input type="number" id="precio" placeholder="Precio" required><br>
-        <textarea id="descripcion" placeholder="Descripción del producto" required></textarea><br>
-        <input type="file" id="imagen" accept="image/*" required><br>
-        <button type="submit">Agregar</button>
-      </form>
-      <h3>Modificar o Eliminar Productos</h3>
-      <ul id="lista-productos-admin"></ul>
-      <button class="admin-button" onclick="openModal('adminModal')">Volver</button>
-    </div>
-  </div>
-
-  <!-- Modal para Detalles del Producto -->
-  <div id="productModal" class="modal">
-    <div class="modal-content" id="productModalContent">
-      <span class="close" onclick="closeModal('productModal')">&times;</span>
-      <img id="modal-image" src="" alt="Imagen del producto" style="width: 100%; height: auto;">
-      <h2 id="modal-name"></h2>
-      <p id="modal-price"></p>
-      <p id="modal-description"></p>
+      <!-- Agregar contenido de admin aquí -->
     </div>
   </div>
 
   <script>
-    let productos = JSON.parse(localStorage.getItem('productos')) || [
-      {
-        id: 1,
-        nombre: "Desayuno Romántico",
-        precio: 350,
-        imagen: "https://via.placeholder.com/200x150",
-        descripcion: "Un desayuno perfecto para compartir con tu pareja."
-      },
-      {
-        id: 2,
-        nombre: "Sorpresa Cumpleaños",
-        precio: 420,
-        imagen: "https://via.placeholder.com/200x150",
-        descripcion: "La sorpresa ideal para celebrar un cumpleaños especial."
-      }
-    ];
-
-    let carrito = [];
-    let claveSecreta = "";
-    const claveCorrecta = "1234";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      mostrarProductos();
-      mostrarProductosAdmin();
-      const logoUrl = localStorage.getItem('companyLogo');
-      if (logoUrl) {
-        document.getElementById('company-logo').src = logoUrl;
-      }
-      makeDraggable('adminModalContent');
-      makeDraggable('logoModalContent');
-      makeDraggable('productosModalContent');
-      makeDraggable('productModalContent');
-    });
-
-    document.addEventListener("keydown", function(event) {
-      claveSecreta += event.key;
-      if (claveSecreta.includes(claveCorrecta)) {
-        openAdminModal();
-        claveSecreta = "";
-      }
-      if (claveSecreta.length > 10) claveSecreta = "";
-    });
-
-    function mostrarProductos() {
-      const contenedor = document.getElementById("productos-container");
-      contenedor.innerHTML = "";
-      productos.forEach((p, index) => {
-        const div = document.createElement("div");
-        div.classList.add("producto");
-        div.innerHTML = `
-          <img src="${p.imagen}" width="200" height="150" onclick="mostrarDetalleProducto(${index})"><br>
-          <h3>${p.nombre}</h3>
-          <p>Precio: $${p.precio}</p>
-          <button class="cart-button" onclick="agregarAlCarrito(${p.id})">🛒</button>
-        `;
-        contenedor.appendChild(div);
-      });
+    // Función para abrir el modal de admin
+    function abrirModalAdmin() {
+      document.getElementById('modalAdmin').style.display = 'flex';
     }
 
-    function mostrarDetalleProducto(index) {
-      const producto = productos[index];
-      document.getElementById('modal-image').src = producto.imagen;
-      document.getElementById('modal-name').textContent = producto.nombre;
-      document.getElementById('modal-price').textContent = `Precio: $${producto.precio}`;
-      document.getElementById('modal-description').textContent = producto.descripcion;
-      openModal('productModal');
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).style.display = "none";
-    }
-
-    function openModal(modalId) {
-      document.getElementById(modalId).style.display = "block";
-    }
-
-    function openAdminModal() {
-      openModal('adminModal');
-    }
-
-    function mostrarProductosAdmin() {
-      const lista = document.getElementById("lista-productos-admin");
-      lista.innerHTML = "";
-      productos.forEach((p, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          ${p.nombre} - $${p.precio}
-          <button onclick="modificarProducto(${index})">Modificar</button>
-          <button onclick="eliminarProducto(${index})">Eliminar</button>
-        `;
-        lista.appendChild(li);
-      });
-    }
-
-    function agregarAlCarrito(id) {
-      const producto = productos.find(p => p.id === id);
-      if (producto) {
-        carrito.push(producto);
-        actualizarCarrito();
-      }
-    }
-
-    function actualizarCarrito() {
-      const lista = document.getElementById("lista-carrito");
-      const total = document.getElementById("total");
-      lista.innerHTML = "";
-      let suma = 0;
-      carrito.forEach(p => {
-        const li = document.createElement("li");
-        li.textContent = `${p.nombre} - $${p.precio}`;
-        suma += p.precio;
-        lista.appendChild(li);
-      });
-      total.textContent = suma;
-    }
-
-    function comprar() {
-      alert("Gracias por tu compra!");
-      carrito = [];
-      actualizarCarrito();
-    }
-
-    function agregarProducto(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('nombre').value;
-      const precio = document.getElementById('precio').value;
-      const descripcion = document.getElementById('descripcion').value;
-      const imagen = document.getElementById('imagen').files[0];
-
-      if (imagen) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const imageUrl = event.target.result;
-          const nuevoProducto = {
-            id: productos.length + 1,
-            nombre,
-            precio: Number(precio),
-            imagen: imageUrl,
-            descripcion
-          };
-          productos.push(nuevoProducto);
-          localStorage.setItem('productos', JSON.stringify(productos));
-          mostrarProductos();
-          mostrarProductosAdmin();
-          alert("Producto agregado exitosamente");
-        };
-        reader.readAsDataURL(imagen);
-      } else {
-        alert("Por favor, selecciona una imagen.");
-      }
-    }
-
-    function modificarProducto(index) {
-      const nuevoNombre = prompt("Ingrese el nuevo nombre del producto:", productos[index].nombre);
-      const nuevoPrecio = prompt("Ingrese el nuevo precio del producto:", productos[index].precio);
-      const nuevaDescripcion = prompt("Ingrese la nueva descripción del producto:", productos[index].descripcion);
-      if (nuevoNombre !== null && nuevoPrecio !== null && nuevaDescripcion !== null) {
-        productos[index].nombre = nuevoNombre;
-        productos[index].precio = Number(nuevoPrecio);
-        productos[index].descripcion = nuevaDescripcion;
-        localStorage.setItem('productos', JSON.stringify(productos));
-        mostrarProductos();
-        mostrarProductosAdmin();
-      }
-    }
-
-    function eliminarProducto(index) {
-      const confirmacion = confirm("¿Está seguro de que desea eliminar este producto?");
-      if (confirmacion) {
-        productos.splice(index, 1);
-        localStorage.setItem('productos', JSON.stringify(productos));
-        mostrarProductos();
-        mostrarProductosAdmin();
-      }
-    }
-
-    function guardarLogo() {
-      const archivo = document.getElementById('logo-input').files[0];
-      if (archivo) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const base64 = e.target.result;
-          localStorage.setItem('companyLogo', base64);
-          document.getElementById('company-logo').src = base64;
-          alert("Logo actualizado correctamente.");
-        };
-        reader.readAsDataURL(archivo);
-      } else {
-        alert("Selecciona una imagen primero.");
-      }
-    }
-
-    function makeDraggable(elementId) {
-      const element = document.getElementById(elementId);
-      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-      element.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
-
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-      }
-
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
+    // Función para cerrar el modal de admin
+    function cerrarModalAdmin() {
+      document.getElementById('modalAdmin').style.display = 'none';
     }
   </script>
 </body>
