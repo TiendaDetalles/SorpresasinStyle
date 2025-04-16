@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sorpresas in Style</title>
   <style>
-    /* ... (Aquí iría todo tu código CSS existente sin cambios) ... */
+    /* ... (tu CSS original sin cambios) ... */
   </style>
 </head>
 <body>
@@ -79,7 +79,7 @@
     const productosAgregados = document.getElementById("productos-agregados");
     const selectorCategoria = document.getElementById("selector-categoria");
 
-    let productos = {};
+    let productos = [];
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let categoriaSeleccionada = "todas";
 
@@ -100,8 +100,7 @@
           const nuevoProducto = {
             nombre, precio, categoria, imagen: reader.result
           };
-          const newProductRef = push(ref(database, 'productos'));
-          set(newProductRef, nuevoProducto);
+          guardarProductoEnFirebase(nuevoProducto);
         };
         reader.readAsDataURL(imagen);
       }
@@ -109,10 +108,18 @@
       this.reset();
     });
 
+    function guardarProductoEnFirebase(producto) {
+      const newProductRef = push(ref(database, 'productos'));
+      set(newProductRef, producto);
+    }
+
     function cargarProductosDesdeFirebase() {
       const productosRef = ref(database, 'productos');
       onValue(productosRef, (snapshot) => {
-        productos = snapshot.val() || {};
+        productos = [];
+        snapshot.forEach((childSnapshot) => {
+          productos.push({ id: childSnapshot.key, ...childSnapshot.val() });
+        });
         actualizarVista();
       });
     }
@@ -122,15 +129,23 @@
       productosAgregados.innerHTML = '';
       actualizarSelectorCategorias();
 
-      const productosFiltrados = Object.entries(productos).filter(([key, p]) =>
-        categoriaSeleccionada === "todas" || p.categoria === categoriaSeleccionada
-      );
+      const productosFiltrados = categoriaSeleccionada === "todas"
+        ? productos
+        : productos.filter(p => p.categoria === categoriaSeleccionada);
 
-      productosFiltrados.forEach(([key, producto]) => {
+      productosFiltrados.forEach((producto) => {
         const tarjeta = `
           <div class="producto-tarjeta">
             <img src="${producto.imagen}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <div class="producto-categoria">${producto.categoria}</div>
-            <button class="producto-boton"12
+            <button class="producto-boton" onclick="agregarAlCarrito('${producto.id}')">🛒</button>
+          </div>`;
+        productosContainer.innerHTML += tarjeta;
+      });
+
+      productos.forEach((producto) => {
+        productosAgregados.innerHTML += `
+          <div class="producto-tarjeta">
+            <7
