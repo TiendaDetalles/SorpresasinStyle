@@ -167,6 +167,27 @@
       }
     }
   </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script>
+    // Configuración de tu proyecto (la que ya pegaste tú)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
+      authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
+      databaseURL: "https://sorpresasinstyle-2664b-default-rtdb.firebaseio.com",
+      projectId: "sorpresasinstyle-2664b",
+      storageBucket: "sorpresasinstyle-2664b.firebasestorage.app",
+      messagingSenderId: "615713402015",
+      appId: "1:615713402015:web:74bcd71e0a22f3815c06aa",
+      measurementId: "G-82WQ2NKVLQ"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
 </head>
 <body>
   <header>
