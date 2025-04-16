@@ -214,7 +214,27 @@
 
   <button id="botonAdmin">⚙️</button>
 
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
+      authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
+      databaseURL: "https://sorpresasinstyle-2664b.firebaseio.com",
+      projectId: "sorpresasinstyle-2664b",
+      storageBucket: "sorpresasinstyle-2664b.appspot.com",
+      messagingSenderId: "615713402015",
+      appId: "1:615713402015:web:8c435f17d757aa225c06aa",
+      measurementId: "G-022Q2CW6W0"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
     const modal = document.getElementById("adminModal");
     const botonAdmin = document.getElementById("botonAdmin");
     const span = document.getElementsByClassName("close")[0];
@@ -222,7 +242,7 @@
     const productosAgregados = document.getElementById("productos-agregados");
     const selectorCategoria = document.getElementById("selector-categoria");
 
-    let productos = JSON.parse(localStorage.getItem("productos")) || [];
+    let productos = [];
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let categoriaSeleccionada = "todas";
 
@@ -243,15 +263,29 @@
           const nuevoProducto = {
             nombre, precio, categoria, imagen: reader.result
           };
-          productos.push(nuevoProducto);
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
+          guardarProductoEnFirebase(nuevoProducto);
         };
         reader.readAsDataURL(imagen);
       }
 
       this.reset();
     });
+
+    function guardarProductoEnFirebase(producto) {
+      const newProductRef = push(ref(database, 'productos'));
+      set(newProductRef, producto);
+    }
+
+    function cargarProductosDesdeFirebase() {
+      const productosRef = ref(database, 'productos');
+      onValue(productosRef, (snapshot) => {
+        productos = [];
+        snapshot.forEach((childSnapshot) => {
+          productos.push(childSnapshot.val());
+        });
+        actualizarVista();
+      });
+    }
 
     function actualizarVista() {
       productosContainer.innerHTML = '';
@@ -311,15 +345,14 @@
     }
 
     function eliminarProducto(index) {
+      // Implementar eliminación de producto en Firebase si es necesario
       productos.splice(index, 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
       actualizarVista();
     }
 
     function editarProducto(index, campo, valor) {
       productos[index][campo] = valor;
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
+      guardarProductoEnFirebase(productos[index]);
     }
 
     function editarImagen(index, input) {
@@ -328,8 +361,7 @@
         const reader = new FileReader();
         reader.onloadend = () => {
           productos[index].imagen = reader.result;
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
+          guardarProductoEnFirebase(productos[index]);
         };
         reader.readAsDataURL(file);
       }
@@ -368,7 +400,7 @@
       if (logo) document.getElementById("company-logo").src = logo;
     }
 
-    actualizarVista();
+    cargarProductosDesdeFirebase();
     actualizarCarrito();
     cargarLogoGuardado();
   </script>
