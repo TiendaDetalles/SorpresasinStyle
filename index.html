@@ -141,6 +141,10 @@
       color: white;
     }
 
+    .categoria-select {
+      margin-bottom: 10px;
+    }
+
     @media screen and (max-width: 600px) {
       #productos-container {
         justify-content: space-around;
@@ -149,6 +153,13 @@
       .producto-tarjeta {
         width: 45%;
         margin: 10px 5px;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      .producto-tarjeta {
+        width: 90%;
+        margin: 10px auto;
       }
     }
   </style>
@@ -182,6 +193,12 @@
         <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required><br><br>
         <input type="number" id="precioProducto" placeholder="Precio" required><br><br>
         <input type="file" id="imagenProducto" accept="image/*" required><br><br>
+        <select id="categoriaProducto" class="categoria-select" required>
+          <option value="">Selecciona una categoría</option>
+          <option value="Desayunos">Desayunos</option>
+          <option value="Almuerzos">Almuerzos</option>
+          <option value="Bebidas">Bebidas</option>
+        </select><br><br>
         <button type="submit" class="admin-button">Agregar Desayuno</button>
       </form>
       <hr>
@@ -220,6 +237,7 @@
       var nombre = document.getElementById("nombreProducto").value;
       var precio = document.getElementById("precioProducto").value;
       var imagen = document.getElementById("imagenProducto").files[0];
+      var categoria = document.getElementById("categoriaProducto").value;
 
       if (imagen) {
         var reader = new FileReader();
@@ -227,7 +245,8 @@
           var nuevoProducto = {
             nombre: nombre,
             precio: precio,
-            imagen: reader.result
+            imagen: reader.result,
+            categoria: categoria
           };
           productos.push(nuevoProducto);
           localStorage.setItem("productos", JSON.stringify(productos));
@@ -241,10 +260,9 @@
 
     function actualizarVista() {
       productosContainer.innerHTML = '';
-      productosAgregados.innerHTML = '';
       productos.forEach((producto, index) => {
         var productoHTML = `
-          <div class="producto-tarjeta">
+          <div class="producto-tarjeta" data-categoria="${producto.categoria}">
             <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
@@ -252,17 +270,6 @@
           </div>
         `;
         productosContainer.innerHTML += productoHTML;
-
-        var adminHTML = `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
-            <div class="producto-nombre">${producto.nombre}</div>
-            <div class="producto-precio">$${producto.precio}</div>
-            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
-            <button class="admin-button" onclick="editarProducto(${index})">Editar</button>
-          </div>
-        `;
-        productosAgregados.innerHTML += adminHTML;
       });
     }
 
@@ -286,23 +293,6 @@
         total += parseFloat(producto.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function eliminarProducto(index) {
-      productos.splice(index, 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
-    }
-
-    function editarProducto(index) {
-      var nuevoNombre = prompt("Nuevo nombre del producto:", productos[index].nombre);
-      var nuevoPrecio = prompt("Nuevo precio del producto:", productos[index].precio);
-      if (nuevoNombre && nuevoPrecio) {
-        productos[index].nombre = nuevoNombre;
-        productos[index].precio = nuevoPrecio;
-        localStorage.setItem("productos", JSON.stringify(productos));
-        actualizarVista();
-      }
     }
 
     function comprar() {
