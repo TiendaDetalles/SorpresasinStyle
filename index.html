@@ -1,7 +1,8 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sorpresas in Style</title>
   <style>
     body {
@@ -9,184 +10,285 @@
       margin: 0;
       padding: 0;
       background-color: #f4f4f9;
-    }header {
-  background-color: #00bfa5;
-  padding: 1em;
-  text-align: center;
-  color: white;
-}
+    }
 
-#company-logo {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
+    header {
+      background-color: #66e0d4;
+      padding: 1em;
+      text-align: center;
+      color: white;
+    }
 
-#filtros {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-}
+    #company-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
-select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
+    #filtro-categoria {
+      margin: 20px auto 0;
+      display: flex;
+      justify-content: center;
+    }
 
-#productos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  padding: 20px;
-}
+    #productos-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      padding: 20px;
+      justify-items: center;
+    }
 
-.producto-tarjeta {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  position: relative;
-}
+    .producto-tarjeta {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      width: 150px;
+      text-align: center;
+      background-color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
 
-.producto-imagen {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
+    .producto-imagen {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
 
-.producto-nombre {
-  font-size: 16px;
-  margin: 8px 0;
-  color: #333;
-}
+    .producto-nombre {
+      font-size: 14px;
+      margin: 6px 0;
+      color: #333;
+    }
 
-.producto-precio {
-  font-size: 14px;
-  color: #666;
-}
+    .producto-precio {
+      font-size: 13px;
+      color: #666;
+    }
 
-.producto-categoria {
-  font-size: 12px;
-  color: #888;
-}
+    .producto-categoria {
+      font-size: 12px;
+      color: #999;
+    }
 
-.producto-boton {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: #00796b;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  width: 35px;
-  height: 35px;
-  font-size: 18px;
-  cursor: pointer;
-}
+    .producto-boton {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: #007acc;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-#carrito {
-  padding: 20px;
-  background-color: #fff;
-  border-top: 1px solid #ddd;
-}
+    #carrito {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 1px solid #ddd;
+    }
 
-#botonAdmin {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
+    #botonAdmin {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 24px;
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
 
-@media screen and (max-width: 600px) {
-  #productos-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
 
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      cursor: pointer;
+    }
+
+    .admin-button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #66e0d4;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .input-edit {
+      width: 100%;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
   <header>
     <img id="company-logo" src="" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
-    <nav>
-      <a href="#">Inicio</a>
-    </nav>
-  </header>  <div id="filtros">
-    <select id="filtroPrecio">
-      <option value="original">Orden original</option>
-      <option value="asc">Precio más bajo</option>
-      <option value="desc">Precio más alto</option>
-    </select>
-    <select id="filtroCategoria">
-      <option value="">Todas las categorías</option>
-    </select>
-  </div>  <main>
-    <section id="productos-container"></section><section id="carrito">
-  <h2>Carrito de Compras</h2>
-  <ul id="lista-carrito"></ul>
-  <p>Total: $<span id="total">0</span></p>
-  <button onclick="comprar()">Comprar</button>
-</section>
+  </header>
 
-  </main><button id="botonAdmin">⚙️</button>
+  <div id="filtro-categoria">
+    <select id="selector-categoria" onchange="filtrarCategoria()">
+      <option value="todas">Todas las categorías</option>
+    </select>
+  </div>
+
+  <main>
+    <section id="productos-container"></section>
+    <section id="carrito">
+      <h2>Carrito de Compras</h2>
+      <ul id="lista-carrito"></ul>
+      <p>Total: $<span id="total">0</span></p>
+      <button onclick="comprar()">Comprar</button>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Panel de Administración</h2>
+      <form id="formulario-producto">
+        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required class="input-edit">
+        <input type="number" id="precioProducto" placeholder="Precio" required class="input-edit">
+        <input type="text" id="categoriaProducto" placeholder="Categoría" required class="input-edit">
+        <input type="file" id="imagenProducto" accept="image/*" required class="input-edit">
+        <button type="submit" class="admin-button">Agregar Desayuno</button>
+      </form>
+      <hr>
+      <h3>Desayunos Agregados</h3>
+      <div id="productos-agregados"></div>
+      <hr>
+      <h3>Cambiar Logo</h3>
+      <input type="file" id="logoInput" accept="image/*" class="input-edit"/>
+      <button onclick="cambiarLogo()" class="admin-button">Cambiar Logo</button>
+    </div>
+  </div>
+
+  <button id="botonAdmin">⚙️</button>
 
   <script>
+    const modal = document.getElementById("adminModal");
+    const botonAdmin = document.getElementById("botonAdmin");
+    const span = document.getElementsByClassName("close")[0];
     const productosContainer = document.getElementById("productos-container");
-    const filtroPrecio = document.getElementById("filtroPrecio");
-    const filtroCategoria = document.getElementById("filtroCategoria");
+    const productosAgregados = document.getElementById("productos-agregados");
+    const selectorCategoria = document.getElementById("selector-categoria");
 
     let productos = JSON.parse(localStorage.getItem("productos")) || [];
-    let productosOriginal = [...productos];
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    let categoriaSeleccionada = "todas";
 
-    function actualizarFiltros() {
-      const categorias = [...new Set(productos.map(p => p.categoria))];
-      filtroCategoria.innerHTML = '<option value="">Todas las categorías</option>' + categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-    }
+    botonAdmin.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 
-    function aplicarFiltros() {
-      let lista = [...productos];
-      const precio = filtroPrecio.value;
-      const categoria = filtroCategoria.value;
+    document.getElementById("formulario-producto").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const nombre = document.getElementById("nombreProducto").value;
+      const precio = document.getElementById("precioProducto").value;
+      const categoria = document.getElementById("categoriaProducto").value;
+      const imagen = document.getElementById("imagenProducto").files[0];
 
-      if (precio === "asc") lista.sort((a, b) => parseFloat(a.precio) - parseFloat(b.precio));
-      if (precio === "desc") lista.sort((a, b) => parseFloat(b.precio) - parseFloat(a.precio));
-      if (categoria) lista = lista.filter(p => p.categoria === categoria);
+      if (imagen) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const nuevoProducto = {
+            nombre, precio, categoria, imagen: reader.result
+          };
+          productos.push(nuevoProducto);
+          localStorage.setItem("productos", JSON.stringify(productos));
+          actualizarVista();
+        };
+        reader.readAsDataURL(imagen);
+      }
 
-      mostrarProductos(lista);
-    }
+      this.reset();
+    });
 
-    filtroPrecio.addEventListener("change", aplicarFiltros);
-    filtroCategoria.addEventListener("change", aplicarFiltros);
-
-    function mostrarProductos(lista) {
+    function actualizarVista() {
       productosContainer.innerHTML = '';
-      lista.forEach((producto, index) => {
-        productosContainer.innerHTML += `
+      productosAgregados.innerHTML = '';
+      actualizarSelectorCategorias();
+
+      const productosFiltrados = categoriaSeleccionada === "todas"
+        ? productos
+        : productos.filter(p => p.categoria === categoriaSeleccionada);
+
+      productosFiltrados.forEach((producto, index) => {
+        const tarjeta = `
           <div class="producto-tarjeta">
-            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
+            <img src="${producto.imagen}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <div class="producto-categoria">${producto.categoria}</div>
             <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
           </div>`;
+        productosContainer.innerHTML += tarjeta;
+      });
+
+      productos.forEach((producto, index) => {
+        productosAgregados.innerHTML += `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" class="producto-imagen">
+            <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
+            <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
+            <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
+            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
+            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
+          </div>`;
       });
     }
 
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    function actualizarSelectorCategorias() {
+      const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
+      selectorCategoria.innerHTML = categorias.map(cat => 
+        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
+    }
 
     function agregarAlCarrito(index) {
-      const producto = productos[index];
-      carrito.push(producto);
+      carrito.push(productos[index]);
       localStorage.setItem("carrito", JSON.stringify(carrito));
       actualizarCarrito();
     }
@@ -195,17 +297,40 @@ select {
       const listaCarrito = document.getElementById("lista-carrito");
       listaCarrito.innerHTML = '';
       let total = 0;
-      carrito.forEach(producto => {
-        const li = document.createElement("li");
-        li.textContent = `${producto.nombre} - $${producto.precio}`;
-        listaCarrito.appendChild(li);
-        total += parseFloat(producto.precio);
+      carrito.forEach(p => {
+        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
+        total += parseFloat(p.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
     }
 
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      localStorage.setItem("productos", JSON.stringify(productos));
+      actualizarVista();
+    }
+
+    function editarProducto(index, campo, valor) {
+      productos[index][campo] = valor;
+      localStorage.setItem("productos", JSON.stringify(productos));
+      actualizarVista();
+    }
+
+    function editarImagen(index, input) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          productos[index].imagen = reader.result;
+          localStorage.setItem("productos", JSON.stringify(productos));
+          actualizarVista();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function comprar() {
-      if (carrito.length > 0) {
+      if (carrito.length) {
         alert("¡Gracias por tu compra!");
         carrito = [];
         localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -215,8 +340,31 @@ select {
       }
     }
 
-    mostrarProductos(productos);
+    function filtrarCategoria() {
+      categoriaSeleccionada = selectorCategoria.value;
+      actualizarVista();
+    }
+
+    function cambiarLogo() {
+      const input = document.getElementById("logoInput").files[0];
+      if (input) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          document.getElementById("company-logo").src = reader.result;
+          localStorage.setItem("logoEmpresa", reader.result);
+        };
+        reader.readAsDataURL(input);
+      }
+    }
+
+    function cargarLogoGuardado() {
+      const logo = localStorage.getItem("logoEmpresa");
+      if (logo) document.getElementById("company-logo").src = logo;
+    }
+
+    actualizarVista();
     actualizarCarrito();
-    actualizarFiltros();
-  </script></body>
+    cargarLogoGuardado();
+  </script>
+</body>
 </html>
