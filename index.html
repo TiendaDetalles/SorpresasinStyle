@@ -243,6 +243,15 @@
       this.reset();
     });
 
+    // Utility function to convert Google Drive URLs to direct access URLs
+    function convertGoogleDriveUrl(url) {
+      const match = url.match(/\/d\/(.*?)\//);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?id=${match[1]}`;
+      }
+      return url; // Return the original URL if it doesn't match the expected pattern
+    }
+
     function actualizarVista() {
       productosContainer.innerHTML = '';
       productosAgregados.innerHTML = '';
@@ -253,9 +262,10 @@
         : productos.filter(p => p.categoria === categoriaSeleccionada);
 
       productosFiltrados.forEach((producto, index) => {
+        const imageUrl = convertGoogleDriveUrl(producto.imagen);
         const tarjeta = `
           <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
+            <img src="${imageUrl}" class="producto-imagen">
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <div class="producto-categoria">${producto.categoria}</div>
@@ -265,9 +275,10 @@
       });
 
       productos.forEach((producto, index) => {
+        const imageUrl = convertGoogleDriveUrl(producto.imagen);
         productosAgregados.innerHTML += `
           <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
+            <img src="${imageUrl}" class="producto-imagen">
             <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
             <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
             <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
