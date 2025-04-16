@@ -193,7 +193,7 @@
         <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required class="input-edit">
         <input type="number" id="precioProducto" placeholder="Precio" required class="input-edit">
         <input type="text" id="categoriaProducto" placeholder="Categoría" required class="input-edit">
-        <input type="file" id="imagenProducto" accept="image/*" required class="input-edit">
+        <input type="text" id="urlImagenProducto" placeholder="URL de la imagen" required class="input-edit">
         <button type="submit" class="admin-button">Agregar Desayuno</button>
       </form>
       <hr>
@@ -229,19 +229,15 @@
       const nombre = document.getElementById("nombreProducto").value;
       const precio = document.getElementById("precioProducto").value;
       const categoria = document.getElementById("categoriaProducto").value;
-      const imagen = document.getElementById("imagenProducto").files[0];
+      const urlImagen = document.getElementById("urlImagenProducto").value;
 
-      if (imagen) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const nuevoProducto = {
-            nombre, precio, categoria, imagen: reader.result
-          };
-          productos.push(nuevoProducto);
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
+      if (urlImagen) {
+        const nuevoProducto = {
+          nombre, precio, categoria, imagen: urlImagen
         };
-        reader.readAsDataURL(imagen);
+        productos.push(nuevoProducto);
+        localStorage.setItem("productos", JSON.stringify(productos));
+        actualizarVista();
       }
 
       this.reset();
@@ -275,7 +271,7 @@
             <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
             <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
             <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
-            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
+            <input class="input-edit" type="text" value="${producto.imagen}" onchange="editarProducto(${index}, 'imagen', this.value)">
             <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
           </div>`;
       });
@@ -284,7 +280,7 @@
     function actualizarSelectorCategorias() {
       const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
       selectorCategoria.innerHTML = categorias.map(cat => 
-        <option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>).join('');
+        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
     }
 
     function agregarAlCarrito(index) {
@@ -298,7 +294,7 @@
       listaCarrito.innerHTML = '';
       let total = 0;
       carrito.forEach(p => {
-        listaCarrito.innerHTML += <li>${p.nombre} - $${p.precio}</li>;
+        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
         total += parseFloat(p.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
@@ -314,19 +310,6 @@
       productos[index][campo] = valor;
       localStorage.setItem("productos", JSON.stringify(productos));
       actualizarVista();
-    }
-
-    function editarImagen(index, input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          productos[index].imagen = reader.result;
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
-        };
-        reader.readAsDataURL(file);
-      }
     }
 
     function comprar() {
