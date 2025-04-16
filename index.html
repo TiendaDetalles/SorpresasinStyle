@@ -1,194 +1,302 @@
-<!DOCTYPE html><html lang="es">
+<!-- Reemplaza TODO tu código anterior con esto -->
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Desayunos Bonitos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorpresas in Style</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      background-color: #e0f7f9; /* Aqua marina suave */
+    }
+
+    header {
+      background-color: #00bfa5;
+      padding: 1em;
+      text-align: center;
+      color: white;
+    }
+
+    #company-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    #productos-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .producto-tarjeta {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px;
+      width: 160px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .producto-imagen {
+      width: 100%;
+      border-radius: 8px;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .producto-nombre {
+      font-size: 16px;
+      margin-top: 8px;
       color: #333;
-    }header {
-  background-color: #00c6a9;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-}
+      font-weight: bold;
+    }
 
-.admin-panel {
-  padding: 1rem;
-  background: #f2f2f2;
-}
+    .producto-precio {
+      font-size: 14px;
+      color: #555;
+    }
 
-.admin-panel input[type="text"],
-.admin-panel input[type="number"],
-.admin-panel input[type="file"] {
-  margin: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+    .producto-boton {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: #00bfa5;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      width: 35px;
+      height: 35px;
+      font-size: 18px;
+      cursor: pointer;
+    }
 
-.admin-panel button {
-  background-color: #00c6a9;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    #carrito {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 2px solid #00bfa5;
+    }
 
-.products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-}
+    #botonAdmin {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 28px;
+      background: white;
+      border: 2px solid #00bfa5;
+      border-radius: 50%;
+      padding: 10px;
+      cursor: pointer;
+    }
 
-.card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: relative;
-}
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
 
-.card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-}
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
 
-.card-content {
-  padding: 0.5rem;
-}
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
 
-.card-content h4 {
-  margin: 0.5rem 0;
-  font-size: 1rem;
-}
+    .close:hover {
+      color: black;
+    }
 
-.price {
-  font-weight: bold;
-  color: #00c6a9;
-}
+    .admin-button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #00bfa5;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-.cart-button {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  background-color: #00c6a9;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: white;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.edit-delete {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-}
-.edit-delete button {
-  flex: 1;
-  margin: 0 0.25rem;
-  font-size: 0.8rem;
-}
-
+    @media screen and (max-width: 600px) {
+      .producto-tarjeta {
+        width: 45%;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Desayunos Bonitos</h1>
-  </header>  <section class="admin-panel">
-    <h2>Panel Admin</h2>
-    <form id="formulario">
-      <input type="text" id="nombre" placeholder="Nombre del desayuno" required />
-      <input type="number" id="precio" placeholder="Precio" required />
-      <input type="file" id="imagen" accept="image/*" required />
-      <button type="submit">Agregar desayuno</button>
-    </form>
-  </section>  <section class="products" id="lista-desayunos"></section>  <script>
-    const formulario = document.getElementById('formulario');
-    const listaDesayunos = document.getElementById('lista-desayunos');
-    let desayunos = JSON.parse(localStorage.getItem('desayunos')) || [];
+    <img id="company-logo" src="" alt="Logo de la empresa">
+    <h1>Sorpresas in Style</h1>
+  </header>
 
-    function renderizarDesayunos() {
-      listaDesayunos.innerHTML = '';
-      desayunos.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
+  <main>
+    <section id="productos-container"></section>
 
-        const imagen = document.createElement('img');
-        imagen.src = item.imagen;
+    <section id="carrito">
+      <h2>Carrito de Compras</h2>
+      <ul id="lista-carrito"></ul>
+      <p>Total: $<span id="total">0</span></p>
+      <button onclick="comprar()">Comprar</button>
+    </section>
+  </main>
 
-        const contenido = document.createElement('div');
-        contenido.className = 'card-content';
-        contenido.innerHTML = `
-          <h4>${item.nombre}</h4>
-          <p class="price">$${item.precio}</p>
+  <!-- Modal Admin -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Panel de Administración</h2>
+      <form id="formulario-producto">
+        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required><br><br>
+        <input type="number" id="precioProducto" placeholder="Precio" required><br><br>
+        <input type="file" id="imagenProducto" accept="image/*" required><br><br>
+        <button type="submit" class="admin-button">Agregar Desayuno</button>
+      </form>
+      <hr>
+      <h3>Desayunos Agregados</h3>
+      <div id="productos-agregados"></div>
+    </div>
+  </div>
+
+  <button id="botonAdmin">⚙️</button>
+
+  <script>
+    const modal = document.getElementById("adminModal");
+    const botonAdmin = document.getElementById("botonAdmin");
+    const span = document.getElementsByClassName("close")[0];
+    const productosContainer = document.getElementById("productos-container");
+    const productosAgregados = document.getElementById("productos-agregados");
+
+    let productos = JSON.parse(localStorage.getItem("productos")) || [];
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+    botonAdmin.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+
+    document.getElementById("formulario-producto").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombreProducto").value;
+      const precio = document.getElementById("precioProducto").value;
+      const imagen = document.getElementById("imagenProducto").files[0];
+
+      if (imagen) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const nuevoProducto = { nombre, precio, imagen: reader.result };
+          productos.push(nuevoProducto);
+          localStorage.setItem("productos", JSON.stringify(productos));
+          actualizarVista();
+          this.reset(); // reset form
+          document.getElementById("formulario-producto").reset(); // limpia campos
+        };
+        reader.readAsDataURL(imagen);
+      }
+    });
+
+    function actualizarVista() {
+      productosContainer.innerHTML = '';
+      productosAgregados.innerHTML = '';
+      productos.forEach((producto, index) => {
+        productosContainer.innerHTML += `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" class="producto-imagen">
+            <div class="producto-nombre">${producto.nombre}</div>
+            <div class="producto-precio">$${producto.precio}</div>
+            <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
+          </div>
         `;
 
-        const botonCarrito = document.createElement('button');
-        botonCarrito.className = 'cart-button';
-        botonCarrito.innerText = '+';
-        botonCarrito.onclick = () => alert(`Añadido ${item.nombre} al carrito!`);
-
-        const acciones = document.createElement('div');
-        acciones.className = 'edit-delete';
-        acciones.innerHTML = `
-          <button onclick="editar(${index})">Editar</button>
-          <button onclick="eliminar(${index})">Eliminar</button>
+        productosAgregados.innerHTML += `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" class="producto-imagen">
+            <div class="producto-nombre">${producto.nombre}</div>
+            <div class="producto-precio">$${producto.precio}</div>
+            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
+            <button class="admin-button" onclick="editarProducto(${index})">Editar</button>
+          </div>
         `;
-
-        card.appendChild(imagen);
-        card.appendChild(contenido);
-        card.appendChild(botonCarrito);
-        contenido.appendChild(acciones);
-        card.appendChild(contenido);
-
-        listaDesayunos.appendChild(card);
       });
     }
 
-    function editar(index) {
-      const item = desayunos[index];
-      document.getElementById('nombre').value = item.nombre;
-      document.getElementById('precio').value = item.precio;
-      desayunos.splice(index, 1);
-      localStorage.setItem('desayunos', JSON.stringify(desayunos));
-      renderizarDesayunos();
+    function agregarAlCarrito(index) {
+      carrito.push(productos[index]);
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      actualizarCarrito();
     }
 
-    function eliminar(index) {
-      desayunos.splice(index, 1);
-      localStorage.setItem('desayunos', JSON.stringify(desayunos));
-      renderizarDesayunos();
+    function actualizarCarrito() {
+      const listaCarrito = document.getElementById("lista-carrito");
+      listaCarrito.innerHTML = '';
+      let total = 0;
+      carrito.forEach(producto => {
+        const li = document.createElement("li");
+        li.textContent = `${producto.nombre} - $${producto.precio}`;
+        listaCarrito.appendChild(li);
+        total += parseFloat(producto.precio);
+      });
+      document.getElementById("total").textContent = total.toFixed(2);
     }
 
-    formulario.addEventListener('submit', e => {
-      e.preventDefault();
-      const nombre = document.getElementById('nombre').value;
-      const precio = document.getElementById('precio').value;
-      const imagenInput = document.getElementById('imagen');
-      const reader = new FileReader();
-      reader.onload = () => {
-        desayunos.push({ nombre, precio, imagen: reader.result });
-        localStorage.setItem('desayunos', JSON.stringify(desayunos));
-        formulario.reset();
-        renderizarDesayunos();
-      };
-      reader.readAsDataURL(imagenInput.files[0]);
-    });
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      localStorage.setItem("productos", JSON.stringify(productos));
+      actualizarVista();
+    }
 
-    renderizarDesayunos();
-  </script></body>
+    function editarProducto(index) {
+      const nuevoNombre = prompt("Nuevo nombre:", productos[index].nombre);
+      const nuevoPrecio = prompt("Nuevo precio:", productos[index].precio);
+      if (nuevoNombre && nuevoPrecio) {
+        productos[index].nombre = nuevoNombre;
+        productos[index].precio = nuevoPrecio;
+        localStorage.setItem("productos", JSON.stringify(productos));
+        actualizarVista();
+      }
+    }
+
+    function comprar() {
+      if (carrito.length > 0) {
+        alert("Gracias por tu compra!");
+        carrito = [];
+        localStorage.setItem("carrito", JSON.stringify(carrito));
+        actualizarCarrito();
+      } else {
+        alert("Tu carrito está vacío.");
+      }
+    }
+
+    actualizarVista();
+    actualizarCarrito();
+  </script>
+</body>
 </html>
