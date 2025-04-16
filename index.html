@@ -282,7 +282,7 @@
             <div class="producto-nombre">${producto.nombre}</div>
             <div class="producto-precio">$${producto.precio}</div>
             <div class="producto-categoria">${producto.categoria}</div>
-            <button class="producto-boton" onclick="agregarAlCarrito(${producto.nombre})">🛒</button>
+            <button class="producto-boton" onclick="agregarAlCarrito('${producto.nombre}')">🛒</button>
           </div>`;
         productosContainer.innerHTML += tarjeta;
       });
