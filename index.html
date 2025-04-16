@@ -18,12 +18,6 @@
       text-align: center;
     }
 
-    nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #333;
-    }
-
     #company-logo {
       width: 50px;
       height: 50px;
@@ -38,7 +32,7 @@
       padding: 20px;
     }
 
-    .producto-tarjeta, .producto {
+    .producto-tarjeta {
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 16px;
@@ -50,7 +44,7 @@
       background-color: white;
     }
 
-    .producto-tarjeta:hover, .producto:hover {
+    .producto-tarjeta:hover {
       transform: translateY(-5px);
     }
 
@@ -68,6 +62,16 @@
     .producto-precio {
       font-size: 16px;
       color: #333;
+    }
+
+    .producto-boton {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #ffb6c1;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
     }
 
     #carrito {
@@ -144,7 +148,7 @@
     }
 
     @media screen and (max-width: 600px) {
-      .producto-tarjeta, .producto {
+      .producto-tarjeta {
         width: 90%;
         margin: 10px auto;
       }
@@ -176,9 +180,7 @@
       <h2>Carrito de Compras</h2>
       <ul id="lista-carrito"></ul>
       <p>Total: $<span id="total">0</span></p>
-      <button onclick="comprar()">
-        <img src="..." alt="Comprar">
-      </button>
+      <button onclick="comprar()">Comprar</button>
     </section>
   </main>
 
@@ -187,9 +189,15 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Panel de Administración</h2>
-      <button class="admin-button">Gestionar Productos</button>
-      <button class="admin-button">Gestionar Pedidos</button>
-      <button class="admin-button">Ver Estadísticas</button>
+      <form id="formulario-producto">
+        <input type="text" id="nombreProducto" placeholder="Nombre del desayuno" required><br><br>
+        <input type="number" id="precioProducto" placeholder="Precio" required><br><br>
+        <input type="file" id="imagenProducto" accept="image/*" required><br><br>
+        <button type="submit" class="admin-button">Agregar Desayuno</button>
+      </form>
+      <hr>
+      <h3>Desayunos Agregados</h3>
+      <div id="productos-agregados"></div>
     </div>
   </div>
 
@@ -200,21 +208,128 @@
     var modal = document.getElementById("adminModal");
     var botonAdmin = document.getElementById("botonAdmin");
     var span = document.getElementsByClassName("close")[0];
+    var productosContainer = document.getElementById("productos-container");
+    var productosAgregados = document.getElementById("productos-agregados");
 
-    // Cuando el usuario haga clic en el botón, mostrar el modal
+    // Datos de los productos
+    var productos = [];
+
+    // Mostrar el modal de administración
     botonAdmin.onclick = function() {
       modal.style.display = "block";
     }
 
-    // Cuando el usuario haga clic en "x", cerrar el modal
+    // Cerrar el modal
     span.onclick = function() {
       modal.style.display = "none";
     }
 
-    // Cuando el usuario haga clic fuera del modal, también cerrarlo
+    // Cerrar modal si se hace clic fuera
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.style.display = "none";
+      }
+    }
+
+    // Función para agregar desayuno
+    document.getElementById("formulario-producto").addEventListener("submit", function(event) {
+      event.preventDefault();
+      
+      var nombre = document.getElementById("nombreProducto").value;
+      var precio = document.getElementById("precioProducto").value;
+      var imagen = document.getElementById("imagenProducto").files[0];
+      
+      if (imagen) {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          var nuevoProducto = {
+            nombre: nombre,
+            precio: precio,
+            imagen: reader.result
+          };
+          productos.push(nuevoProducto);
+          actualizarVista();
+        };
+        reader.readAsDataURL(imagen);
+      }
+    });
+
+    // Función para actualizar la vista de productos
+    function actualizarVista() {
+      productosContainer.innerHTML = '';
+      productosAgregados.innerHTML = '';
+      productos.forEach((producto, index) => {
+        // Mostrar en la vista principal
+        var productoHTML = `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
+            <div class="producto-nombre">${producto.nombre}</div>
+            <div class="producto-precio">$${producto.precio}</div>
+            <button class="producto-boton" onclick="agregarAlCarrito(${index})">Agregar al carrito</button>
+          </div>
+        `;
+        productosContainer.innerHTML += productoHTML;
+
+        // Mostrar en el panel de administración
+        var adminHTML = `
+          <div class="producto-tarjeta">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="producto-imagen">
+            <div class="producto-nombre">${producto.nombre}</div>
+            <div class="producto-precio">$${producto.precio}</div>
+            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
+            <button class="admin-button" onclick="editarProducto(${index})">Editar</button>
+          </div>
+        `;
+        productosAgregados.innerHTML += adminHTML;
+      });
+    }
+
+    // Función para agregar al carrito
+    var carrito = [];
+    function agregarAlCarrito(index) {
+      var producto = productos[index];
+      carrito.push(producto);
+      actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+      var listaCarrito = document.getElementById("lista-carrito");
+      listaCarrito.innerHTML = '';
+      var total = 0;
+      carrito.forEach(producto => {
+        var li = document.createElement("li");
+        li.textContent = `${producto.nombre} - $${producto.precio}`;
+        listaCarrito.appendChild(li);
+        total += parseFloat(producto.precio);
+      });
+      document.getElementById("total").textContent = total.toFixed(2);
+    }
+
+    // Función para eliminar producto
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      actualizarVista();
+    }
+
+    // Función para editar producto
+    function editarProducto(index) {
+      var nuevoNombre = prompt("Nuevo nombre del producto:", productos[index].nombre);
+      var nuevoPrecio = prompt("Nuevo precio del producto:", productos[index].precio);
+      if (nuevoNombre && nuevoPrecio) {
+        productos[index].nombre = nuevoNombre;
+        productos[index].precio = nuevoPrecio;
+        actualizarVista();
+      }
+    }
+
+    // Función para realizar compra
+    function comprar() {
+      if (carrito.length > 0) {
+        alert("Gracias por tu compra!");
+        carrito = [];
+        actualizarCarrito();
+      } else {
+        alert("Tu carrito está vacío.");
       }
     }
   </script>
