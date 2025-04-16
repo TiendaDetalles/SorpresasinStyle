@@ -188,7 +188,7 @@
     <p>No has agregado productos al carrito.</p>
   </section>
 
-  <button id="botonAdmin" onclick="abrirModalAdmin()">Admin</button>
+  <button id="botonAdmin" onclick="verificarClave()">Admin</button>
 
   <!-- Modal de Admin -->
   <div class="modal" id="modalAdmin">
@@ -199,7 +199,33 @@
     </div>
   </div>
 
+  <!-- Modal para ingresar la clave -->
+  <div class="modal" id="modalClave">
+    <div class="modal-content">
+      <h2>Ingresa la clave de administrador</h2>
+      <input type="password" id="claveAdmin" placeholder="Clave">
+      <button onclick="verificarClaveCorrecta()">Ingresar</button>
+      <span onclick="cerrarModalClave()" style="cursor:pointer;">Cerrar</span>
+    </div>
+  </div>
+
   <script>
+    // Función para verificar si la clave es correcta antes de abrir el modal de admin
+    function verificarClave() {
+      document.getElementById('modalClave').style.display = 'flex';
+    }
+
+    // Función para verificar si la clave ingresada es correcta
+    function verificarClaveCorrecta() {
+      const claveIngresada = document.getElementById('claveAdmin').value;
+      if (claveIngresada === '1234') {
+        abrirModalAdmin();
+        cerrarModalClave();
+      } else {
+        alert('Clave incorrecta. Intenta nuevamente.');
+      }
+    }
+
     // Función para abrir el modal de admin
     function abrirModalAdmin() {
       document.getElementById('modalAdmin').style.display = 'flex';
@@ -208,6 +234,11 @@
     // Función para cerrar el modal de admin
     function cerrarModalAdmin() {
       document.getElementById('modalAdmin').style.display = 'none';
+    }
+
+    // Función para cerrar el modal de la clave
+    function cerrarModalClave() {
+      document.getElementById('modalClave').style.display = 'none';
     }
   </script>
 </body>
