@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Sorpresas in Style</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,7 +37,7 @@
       padding: 20px;
     }
 
-    .producto-tarjeta, .producto {
+    .producto {
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 16px;
@@ -49,7 +48,7 @@
       transition: transform 0.2s;
     }
 
-    .producto-tarjeta:hover, .producto:hover {
+    .producto:hover {
       transform: translateY(-5px);
     }
 
@@ -76,33 +75,16 @@
     }
 
     #botonAdmin {
+      display: none;
       position: fixed;
       bottom: 20px;
       right: 20px;
-      font-size: 16px;
-      background-color: #ffb6c1;
+      font-size: 24px;
+      background: none;
       border: none;
-      border-radius: 8px;
-      padding: 10px 15px;
-      color: #fff;
       cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
-    @media (max-width: 600px) {
-      .producto-tarjeta, .producto {
-        width: 100%;
-        max-width: 300px;
-      }
-
-      #botonAdmin {
-        font-size: 14px;
-        padding: 8px 12px;
-      }
-    }
-
-    /* Estilos para los modales */
     .modal {
       display: none;
       position: fixed;
@@ -163,7 +145,7 @@
 </head>
 <body>
   <header>
-    <img id="company-logo" src="" alt="Logo de la empresa">
+    <img id="company-logo" src="logo.png" alt="Logo de la empresa">
     <h1>Sorpresas in Style</h1>
     <nav>
       <a href="#">Inicio</a>
@@ -171,7 +153,9 @@
   </header>
 
   <main>
-    <section id="productos-container"></section>
+    <section id="productos-container">
+      <!-- Aquí se agregarán dinámicamente los productos -->
+    </section>
 
     <section id="carrito">
       <h2>Carrito de Compras</h2>
@@ -181,12 +165,12 @@
     </section>
   </main>
 
-  <!-- Botón flotante de admin -->
-  <button id="botonAdmin" onclick="window.location.href='admin.html'">Admin</button>
+  <button id="botonAdmin" title="Admin">⚙️</button>
 
+  <!-- Agrega aquí tus scripts o funcionalidades JavaScript si es necesario -->
   <script>
     function comprar() {
-      alert("Gracias por su compra!");
+      alert("Gracias por su compra. ¡Vuelva pronto!");
     }
   </script>
 </body>
