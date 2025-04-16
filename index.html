@@ -160,6 +160,12 @@
       width: 100%;
       margin: 5px 0;
     }
+
+    @media screen and (min-width: 600px) {
+      #productos-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
   </style>
 </head>
 <body>
