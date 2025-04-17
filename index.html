@@ -33,8 +33,11 @@
     #categorias-container {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
       margin-top: 10px;
+      padding: 5px;
+      width: 100%;
     }
 
     .categoria-boton {
@@ -46,6 +49,7 @@
       margin: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
+      white-space: nowrap;
     }
 
     .categoria-boton:hover {
