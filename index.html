@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,26 +26,10 @@
       object-fit: cover;
     }
 
-    #categorias-container {
+    #filtro-categoria {
+      margin: 20px auto 0;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
-      margin: 20px 0;
-    }
-
-    .categoria-boton {
-      background-color: #007acc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 15px;
-      margin: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .categoria-boton:hover {
-      background-color: #005f99;
     }
 
     #productos-container {
@@ -212,7 +195,11 @@
     <h1>Sorpresas in Style</h1>
   </header>
 
-  <div id="categorias-container"></div>
+  <div id="filtro-categoria">
+    <select id="selector-categoria" onchange="filtrarCategoria()">
+      <option value="todas">Todas las categorías</option>
+    </select>
+  </div>
 
   <main>
     <section id="productos-container"></section>
@@ -254,7 +241,7 @@
     const span = document.getElementsByClassName("close")[0];
     const productosContainer = document.getElementById("productos-container");
     const productosAgregados = document.getElementById("productos-agregados");
-    const categoriasContainer = document.getElementById("categorias-container");
+    const selectorCategoria = document.getElementById("selector-categoria");
 
     let productos = JSON.parse(localStorage.getItem("productos")) || [];
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -290,7 +277,7 @@
     function actualizarVista() {
       productosContainer.innerHTML = '';
       productosAgregados.innerHTML = '';
-      actualizarBotonesCategorias();
+      actualizarSelectorCategorias();
 
       const productosFiltrados = categoriaSeleccionada === "todas"
         ? productos
@@ -321,10 +308,10 @@
       });
     }
 
-    function actualizarBotonesCategorias() {
+    function actualizarSelectorCategorias() {
       const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
-      categoriasContainer.innerHTML = categorias.map(cat => 
-        `<button class="categoria-boton" onclick="filtrarCategoria('${cat}')">${cat}</button>`).join('');
+      selectorCategoria.innerHTML = categorias.map(cat => 
+        `<option value="${cat}" ${cat === categoriaSeleccionada ? "selected" : ""}>${cat}</option>`).join('');
     }
 
     function agregarAlCarrito(index) {
@@ -380,8 +367,8 @@
       }
     }
 
-    function filtrarCategoria(categoria) {
-      categoriaSeleccionada = categoria;
+    function filtrarCategoria() {
+      categoriaSeleccionada = selectorCategoria.value;
       actualizarVista();
     }
 
