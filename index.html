@@ -213,6 +213,70 @@
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const analytics = firebase.analytics(app);
+
+    // Referencias a la base de datos
+    const productosRef = database.ref('productos');
+    const carritoRef = database.ref('carrito');
+
+    // Escuchar cambios en productos
+    productosRef.on('value', (snapshot) => {
+      productos = snapshot.val() || [];
+      actualizarVista();
+    });
+
+    // Escuchar cambios en carrito
+    carritoRef.on('value', (snapshot) => {
+      carrito = snapshot.val() || [];
+      actualizarCarrito();
+    });
+
+    // Agregar producto a la base de datos
+    function agregarProducto(nuevoProducto) {
+      productos.push(nuevoProducto);
+      productosRef.set(productos);
+    }
+
+    // Agregar al carrito en la base de datos
+    function agregarAlCarrito(index) {
+      carrito.push(productos[index]);
+      carritoRef.set(carrito);
+    }
+
+    // Eliminar producto de la base de datos
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      productosRef.set(productos);
+    }
+
+    // Editar producto en la base de datos
+    function editarProducto(index, campo, valor) {
+      productos[index][campo] = valor;
+      productosRef.set(productos);
+    }
+
+    // Editar imagen del producto en la base de datos
+    function editarImagen(index, input) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          productos[index].imagen = reader.result;
+          productosRef.set(productos);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Comprar y vaciar carrito en la base de datos
+    function comprar() {
+      if (carrito.length) {
+        alert("¡Gracias por tu compra!");
+        carrito = [];
+        carritoRef.set(carrito);
+      } else {
+        alert("Tu carrito está vacío.");
+      }
+    }
   </script>
 </head>
 <body>
@@ -264,8 +328,8 @@
     const productosAgregados = document.getElementById("productos-agregados");
     const categoriasContainer = document.getElementById("categorias-container");
 
-    let productos = JSON.parse(localStorage.getItem("productos")) || [];
-    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    let productos = [];
+    let carrito = [];
     let categoriaSeleccionada = "todas";
 
     botonAdmin.onclick = () => modal.style.display = "block";
@@ -285,9 +349,7 @@
           const nuevoProducto = {
             nombre, precio, categoria, imagen: reader.result
           };
-          productos.push(nuevoProducto);
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
+          agregarProducto(nuevoProducto);
         };
         reader.readAsDataURL(imagen);
       }
@@ -335,12 +397,6 @@
         `<button class="categoria-boton" onclick="filtrarCategoria('${cat}')">${cat}</button>`).join('');
     }
 
-    function agregarAlCarrito(index) {
-      carrito.push(productos[index]);
-      localStorage.setItem("carrito", JSON.stringify(carrito));
-      actualizarCarrito();
-    }
-
     function actualizarCarrito() {
       const listaCarrito = document.getElementById("lista-carrito");
       listaCarrito.innerHTML = '';
@@ -350,42 +406,6 @@
         total += parseFloat(p.precio);
       });
       document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function eliminarProducto(index) {
-      productos.splice(index, 1);
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
-    }
-
-    function editarProducto(index, campo, valor) {
-      productos[index][campo] = valor;
-      localStorage.setItem("productos", JSON.stringify(productos));
-      actualizarVista();
-    }
-
-    function editarImagen(index, input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          productos[index].imagen = reader.result;
-          localStorage.setItem("productos", JSON.stringify(productos));
-          actualizarVista();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function comprar() {
-      if (carrito.length) {
-        alert("¡Gracias por tu compra!");
-        carrito = [];
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-        actualizarCarrito();
-      } else {
-        alert("Tu carrito está vacío.");
-      }
     }
 
     function filtrarCategoria(categoria) {
@@ -410,8 +430,6 @@
       if (logo) document.getElementById("company-logo").src = logo;
     }
 
-    actualizarVista();
-    actualizarCarrito();
     cargarLogoGuardado();
   </script>
 </body>
