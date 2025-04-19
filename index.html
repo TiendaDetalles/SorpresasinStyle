@@ -80,7 +80,6 @@
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
-      loading: lazy;
     }
 
     .producto-nombre {
@@ -194,9 +193,9 @@
   </style>
 
   <!-- Firebase SDKs -->
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Configuración de tu proyecto
@@ -351,7 +350,7 @@
         productosFiltrados.forEach((producto, index) => {
           const tarjeta = `
             <div class="producto-tarjeta">
-              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <img src="${producto.imagen}" class="producto-imagen">
               <div class="producto-nombre">${producto.nombre}</div>
               <div class="producto-precio">$${producto.precio}</div>
               <div class="producto-categoria">${producto.categoria}</div>
@@ -363,7 +362,7 @@
         productos.forEach((producto, index) => {
           productosAgregados.innerHTML += `
             <div class="producto-tarjeta">
-              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <img src="${producto.imagen}" class="producto-imagen">
               <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
               <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
               <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
