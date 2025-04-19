@@ -195,8 +195,9 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
   <script>
-    // Configuración de tu proyecto (la que ya pegaste tú)
+    // Configuración de tu proyecto
     const firebaseConfig = {
       apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
       authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
@@ -209,8 +210,9 @@
     };
 
     // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
+    const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const analytics = firebase.analytics(app);
   </script>
 </head>
 <body>
