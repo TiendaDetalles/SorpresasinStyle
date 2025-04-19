@@ -217,6 +217,7 @@
     // Referencias a la base de datos
     const productosRef = database.ref('productos');
     const carritoRef = database.ref('carrito');
+    const logoRef = database.ref('logo');
 
     // Escuchar cambios en productos
     productosRef.on('value', (snapshot) => {
@@ -228,6 +229,14 @@
     carritoRef.on('value', (snapshot) => {
       carrito = snapshot.val() || [];
       actualizarCarrito();
+    });
+
+    // Escuchar cambios en el logo
+    logoRef.on('value', (snapshot) => {
+      const logoUrl = snapshot.val();
+      if (logoUrl) {
+        document.getElementById("company-logo").src = logoUrl;
+      }
     });
 
     // Agregar producto a la base de datos
@@ -264,6 +273,20 @@
           productosRef.set(productos);
         };
         reader.readAsDataURL(file);
+      }
+    }
+
+    // Cambiar logo en la base de datos
+    function cambiarLogo() {
+      const input = document.getElementById("logoInput").files[0];
+      if (input) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const logoUrl = reader.result;
+          document.getElementById("company-logo").src = logoUrl;
+          logoRef.set(logoUrl);
+        };
+        reader.readAsDataURL(input);
       }
     }
 
@@ -412,25 +435,6 @@
       categoriaSeleccionada = categoria;
       actualizarVista();
     }
-
-    function cambiarLogo() {
-      const input = document.getElementById("logoInput").files[0];
-      if (input) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          document.getElementById("company-logo").src = reader.result;
-          localStorage.setItem("logoEmpresa", reader.result);
-        };
-        reader.readAsDataURL(input);
-      }
-    }
-
-    function cargarLogoGuardado() {
-      const logo = localStorage.getItem("logoEmpresa");
-      if (logo) document.getElementById("company-logo").src = logo;
-    }
-
-    cargarLogoGuardado();
   </script>
 </body>
 </html>
