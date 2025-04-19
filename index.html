@@ -80,6 +80,7 @@
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
+      loading: lazy;
     }
 
     .producto-nombre {
@@ -193,113 +194,207 @@
   </style>
 
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
   <script>
-    // Configuración de tu proyecto
-    const firebaseConfig = {
-      apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
-      authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
-      databaseURL: "https://sorpresasinstyle-2664b-default-rtdb.firebaseio.com",
-      projectId: "sorpresasinstyle-2664b",
-      storageBucket: "sorpresasinstyle-2664b.firebasestorage.app",
-      messagingSenderId: "615713402015",
-      appId: "1:615713402015:web:74bcd71e0a22f3815c06aa",
-      measurementId: "G-82WQ2NKVLQ"
-    };
+    document.addEventListener("DOMContentLoaded", function() {
+      // Configuración de tu proyecto
+      const firebaseConfig = {
+        apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
+        authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
+        databaseURL: "https://sorpresasinstyle-2664b-default-rtdb.firebaseio.com",
+        projectId: "sorpresasinstyle-2664b",
+        storageBucket: "sorpresasinstyle-2664b.firebasestorage.app",
+        messagingSenderId: "615713402015",
+        appId: "1:615713402015:web:74bcd71e0a22f3815c06aa",
+        measurementId: "G-82WQ2NKVLQ"
+      };
 
-    // Inicializar Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    const analytics = firebase.analytics(app);
+      // Inicializar Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const analytics = firebase.analytics(app);
 
-    // Referencias a la base de datos
-    const productosRef = database.ref('productos');
-    const carritoRef = database.ref('carrito');
-    const logoRef = database.ref('logo');
+      // Referencias a la base de datos
+      const productosRef = database.ref('productos');
+      const carritoRef = database.ref('carrito');
+      const logoRef = database.ref('logo');
 
-    // Escuchar cambios en productos
-    productosRef.on('value', (snapshot) => {
-      productos = snapshot.val() || [];
-      actualizarVista();
-    });
+      // Escuchar cambios en productos
+      productosRef.on('value', (snapshot) => {
+        productos = snapshot.val() || [];
+        actualizarVista();
+      });
 
-    // Escuchar cambios en carrito
-    carritoRef.on('value', (snapshot) => {
-      carrito = snapshot.val() || [];
-      actualizarCarrito();
-    });
+      // Escuchar cambios en carrito
+      carritoRef.on('value', (snapshot) => {
+        carrito = snapshot.val() || [];
+        actualizarCarrito();
+      });
 
-    // Escuchar cambios en el logo
-    logoRef.on('value', (snapshot) => {
-      const logoUrl = snapshot.val();
-      if (logoUrl) {
-        document.getElementById("company-logo").src = logoUrl;
-      }
-    });
-
-    // Agregar producto a la base de datos
-    function agregarProducto(nuevoProducto) {
-      productos.push(nuevoProducto);
-      productosRef.set(productos);
-    }
-
-    // Agregar al carrito en la base de datos
-    function agregarAlCarrito(index) {
-      carrito.push(productos[index]);
-      carritoRef.set(carrito);
-    }
-
-    // Eliminar producto de la base de datos
-    function eliminarProducto(index) {
-      productos.splice(index, 1);
-      productosRef.set(productos);
-    }
-
-    // Editar producto en la base de datos
-    function editarProducto(index, campo, valor) {
-      productos[index][campo] = valor;
-      productosRef.set(productos);
-    }
-
-    // Editar imagen del producto en la base de datos
-    function editarImagen(index, input) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          productos[index].imagen = reader.result;
-          productosRef.set(productos);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Cambiar logo en la base de datos
-    function cambiarLogo() {
-      const input = document.getElementById("logoInput").files[0];
-      if (input) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const logoUrl = reader.result;
+      // Escuchar cambios en el logo
+      logoRef.on('value', (snapshot) => {
+        const logoUrl = snapshot.val();
+        if (logoUrl) {
           document.getElementById("company-logo").src = logoUrl;
-          logoRef.set(logoUrl);
-        };
-        reader.readAsDataURL(input);
-      }
-    }
+        }
+      });
 
-    // Comprar y vaciar carrito en la base de datos
-    function comprar() {
-      if (carrito.length) {
-        alert("¡Gracias por tu compra!");
-        carrito = [];
-        carritoRef.set(carrito);
-      } else {
-        alert("Tu carrito está vacío.");
+      // Agregar producto a la base de datos
+      function agregarProducto(nuevoProducto) {
+        productos.push(nuevoProducto);
+        productosRef.set(productos);
       }
-    }
+
+      // Agregar al carrito en la base de datos
+      function agregarAlCarrito(index) {
+        carrito.push(productos[index]);
+        carritoRef.set(carrito);
+      }
+
+      // Eliminar producto de la base de datos
+      function eliminarProducto(index) {
+        productos.splice(index, 1);
+        productosRef.set(productos);
+      }
+
+      // Editar producto en la base de datos
+      function editarProducto(index, campo, valor) {
+        productos[index][campo] = valor;
+        productosRef.set(productos);
+      }
+
+      // Editar imagen del producto en la base de datos
+      function editarImagen(index, input) {
+        const file = input.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            productos[index].imagen = reader.result;
+            productosRef.set(productos);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Cambiar logo en la base de datos
+      function cambiarLogo() {
+        const input = document.getElementById("logoInput").files[0];
+        if (input) {
+          const reader = new FileReader();
+          reader.onloadend = function () {
+            const logoUrl = reader.result;
+            document.getElementById("company-logo").src = logoUrl;
+            logoRef.set(logoUrl);
+          };
+          reader.readAsDataURL(input);
+        }
+      }
+
+      // Comprar y vaciar carrito en la base de datos
+      function comprar() {
+        if (carrito.length) {
+          alert("¡Gracias por tu compra!");
+          carrito = [];
+          carritoRef.set(carrito);
+        } else {
+          alert("Tu carrito está vacío.");
+        }
+      }
+
+      const modal = document.getElementById("adminModal");
+      const botonAdmin = document.getElementById("botonAdmin");
+      const span = document.getElementsByClassName("close")[0];
+      const productosContainer = document.getElementById("productos-container");
+      const productosAgregados = document.getElementById("productos-agregados");
+      const categoriasContainer = document.getElementById("categorias-container");
+
+      let productos = [];
+      let carrito = [];
+      let categoriaSeleccionada = "todas";
+
+      botonAdmin.onclick = () => modal.style.display = "block";
+      span.onclick = () => modal.style.display = "none";
+      window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+      document.getElementById("formulario-producto").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const nombre = document.getElementById("nombreProducto").value;
+        const precio = document.getElementById("precioProducto").value;
+        const categoria = document.getElementById("categoriaProducto").value;
+        const imagen = document.getElementById("imagenProducto").files[0];
+
+        if (imagen) {
+          const reader = new FileReader();
+          reader.onloadend = function () {
+            const nuevoProducto = {
+              nombre, precio, categoria, imagen: reader.result
+            };
+            agregarProducto(nuevoProducto);
+          };
+          reader.readAsDataURL(imagen);
+        }
+
+        this.reset();
+      });
+
+      function actualizarVista() {
+        productosContainer.innerHTML = '';
+        productosAgregados.innerHTML = '';
+        actualizarBotonesCategorias();
+
+        const productosFiltrados = categoriaSeleccionada === "todas"
+          ? productos
+          : productos.filter(p => p.categoria === categoriaSeleccionada);
+
+        productosFiltrados.forEach((producto, index) => {
+          const tarjeta = `
+            <div class="producto-tarjeta">
+              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <div class="producto-nombre">${producto.nombre}</div>
+              <div class="producto-precio">$${producto.precio}</div>
+              <div class="producto-categoria">${producto.categoria}</div>
+              <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
+            </div>`;
+          productosContainer.innerHTML += tarjeta;
+        });
+
+        productos.forEach((producto, index) => {
+          productosAgregados.innerHTML += `
+            <div class="producto-tarjeta">
+              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
+              <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
+              <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
+              <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
+              <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
+            </div>`;
+        });
+      }
+
+      function actualizarBotonesCategorias() {
+        const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
+        categoriasContainer.innerHTML = categorias.map(cat => 
+          `<button class="categoria-boton" onclick="filtrarCategoria('${cat}')">${cat}</button>`).join('');
+      }
+
+      function actualizarCarrito() {
+        const listaCarrito = document.getElementById("lista-carrito");
+        listaCarrito.innerHTML = '';
+        let total = 0;
+        carrito.forEach(p => {
+          listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
+          total += parseFloat(p.precio);
+        });
+        document.getElementById("total").textContent = total.toFixed(2);
+      }
+
+      function filtrarCategoria(categoria) {
+        categoriaSeleccionada = categoria;
+        actualizarVista();
+      }
+    });
   </script>
 </head>
 <body>
@@ -342,99 +437,5 @@
   </div>
 
   <button id="botonAdmin">⚙️</button>
-
-  <script>
-    const modal = document.getElementById("adminModal");
-    const botonAdmin = document.getElementById("botonAdmin");
-    const span = document.getElementsByClassName("close")[0];
-    const productosContainer = document.getElementById("productos-container");
-    const productosAgregados = document.getElementById("productos-agregados");
-    const categoriasContainer = document.getElementById("categorias-container");
-
-    let productos = [];
-    let carrito = [];
-    let categoriaSeleccionada = "todas";
-
-    botonAdmin.onclick = () => modal.style.display = "block";
-    span.onclick = () => modal.style.display = "none";
-    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
-
-    document.getElementById("formulario-producto").addEventListener("submit", function (event) {
-      event.preventDefault();
-      const nombre = document.getElementById("nombreProducto").value;
-      const precio = document.getElementById("precioProducto").value;
-      const categoria = document.getElementById("categoriaProducto").value;
-      const imagen = document.getElementById("imagenProducto").files[0];
-
-      if (imagen) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const nuevoProducto = {
-            nombre, precio, categoria, imagen: reader.result
-          };
-          agregarProducto(nuevoProducto);
-        };
-        reader.readAsDataURL(imagen);
-      }
-
-      this.reset();
-    });
-
-    function actualizarVista() {
-      productosContainer.innerHTML = '';
-      productosAgregados.innerHTML = '';
-      actualizarBotonesCategorias();
-
-      const productosFiltrados = categoriaSeleccionada === "todas"
-        ? productos
-        : productos.filter(p => p.categoria === categoriaSeleccionada);
-
-      productosFiltrados.forEach((producto, index) => {
-        const tarjeta = `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
-            <div class="producto-nombre">${producto.nombre}</div>
-            <div class="producto-precio">$${producto.precio}</div>
-            <div class="producto-categoria">${producto.categoria}</div>
-            <button class="producto-boton" onclick="agregarAlCarrito(${index})">🛒</button>
-          </div>`;
-        productosContainer.innerHTML += tarjeta;
-      });
-
-      productos.forEach((producto, index) => {
-        productosAgregados.innerHTML += `
-          <div class="producto-tarjeta">
-            <img src="${producto.imagen}" class="producto-imagen">
-            <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
-            <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
-            <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
-            <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
-            <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
-          </div>`;
-      });
-    }
-
-    function actualizarBotonesCategorias() {
-      const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
-      categoriasContainer.innerHTML = categorias.map(cat => 
-        `<button class="categoria-boton" onclick="filtrarCategoria('${cat}')">${cat}</button>`).join('');
-    }
-
-    function actualizarCarrito() {
-      const listaCarrito = document.getElementById("lista-carrito");
-      listaCarrito.innerHTML = '';
-      let total = 0;
-      carrito.forEach(p => {
-        listaCarrito.innerHTML += `<li>${p.nombre} - $${p.precio}</li>`;
-        total += parseFloat(p.precio);
-      });
-      document.getElementById("total").textContent = total.toFixed(2);
-    }
-
-    function filtrarCategoria(categoria) {
-      categoriaSeleccionada = categoria;
-      actualizarVista();
-    }
-  </script>
 </body>
 </html>
