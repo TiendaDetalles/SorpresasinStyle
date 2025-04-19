@@ -80,7 +80,6 @@
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
-      loading: lazy;
     }
 
     .producto-nombre {
@@ -186,13 +185,6 @@
       margin: 5px 0;
     }
 
-    .placeholder {
-      background-color: #e0e0e0;
-      border-radius: 6px;
-      width: 100%;
-      height: 120px;
-    }
-
     @media screen and (min-width: 600px) {
       #productos-container {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -201,9 +193,9 @@
   </style>
 
   <!-- Firebase SDKs -->
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Configuración de tu proyecto
@@ -227,10 +219,6 @@
       const productosRef = database.ref('productos');
       const carritoRef = database.ref('carrito');
       const logoRef = database.ref('logo');
-
-      // Mostrar marcador de posición mientras se cargan los datos
-      const productosContainer = document.getElementById("productos-container");
-      productosContainer.innerHTML = '<div class="placeholder"></div>'.repeat(6);
 
       // Escuchar cambios en productos
       productosRef.on('value', (snapshot) => {
@@ -317,6 +305,7 @@
       const modal = document.getElementById("adminModal");
       const botonAdmin = document.getElementById("botonAdmin");
       const span = document.getElementsByClassName("close")[0];
+      const productosContainer = document.getElementById("productos-container");
       const productosAgregados = document.getElementById("productos-agregados");
       const categoriasContainer = document.getElementById("categorias-container");
 
@@ -361,7 +350,7 @@
         productosFiltrados.forEach((producto, index) => {
           const tarjeta = `
             <div class="producto-tarjeta">
-              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <img src="${producto.imagen}" class="producto-imagen">
               <div class="producto-nombre">${producto.nombre}</div>
               <div class="producto-precio">$${producto.precio}</div>
               <div class="producto-categoria">${producto.categoria}</div>
@@ -373,7 +362,7 @@
         productos.forEach((producto, index) => {
           productosAgregados.innerHTML += `
             <div class="producto-tarjeta">
-              <img src="${producto.imagen}" class="producto-imagen" loading="lazy">
+              <img src="${producto.imagen}" class="producto-imagen">
               <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
               <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
               <input class="input-edit" type="text" value="${producto.categoria}" onchange="editarProducto(${index}, 'categoria', this.value)">
