@@ -197,7 +197,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       const firebaseConfig = {
         apiKey: "AIzaSyCpHYnWuWp7sb9P-HR6rEMg7fg9Xigl-lA",
         authDomain: "sorpresasinstyle-2664b.firebaseapp.com",
@@ -216,78 +216,6 @@
       const productosRef = database.ref('productos');
       const carritoRef = database.ref('carrito');
       const logoRef = database.ref('logo');
-
-      productosRef.on('value', (snapshot) => {
-        productos = snapshot.val() || [];
-        actualizarVista();
-      });
-
-      carritoRef.on('value', (snapshot) => {
-        carrito = snapshot.val() || [];
-        actualizarCarrito();
-      });
-
-      logoRef.on('value', (snapshot) => {
-        const logoUrl = snapshot.val();
-        if (logoUrl) {
-          document.getElementById("company-logo").src = logoUrl;
-        }
-      });
-
-      function agregarProducto(nuevoProducto) {
-        productos.push(nuevoProducto);
-        productosRef.set(productos);
-      }
-
-      function agregarAlCarrito(index) {
-        carrito.push(productos[index]);
-        carritoRef.set(carrito);
-      }
-
-      function eliminarProducto(index) {
-        productos.splice(index, 1);
-        productosRef.set(productos);
-      }
-
-      function editarProducto(index, campo, valor) {
-        productos[index][campo] = valor;
-        productosRef.set(productos);
-      }
-
-      function editarImagen(index, input) {
-        const file = input.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            productos[index].imagen = reader.result;
-            productosRef.set(productos);
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-
-      function cambiarLogo() {
-        const input = document.getElementById("logoInput").files[0];
-        if (input) {
-          const reader = new FileReader();
-          reader.onloadend = function () {
-            const logoUrl = reader.result;
-            document.getElementById("company-logo").src = logoUrl;
-            logoRef.set(logoUrl);
-          };
-          reader.readAsDataURL(input);
-        }
-      }
-
-      function comprar() {
-        if (carrito.length) {
-          alert("¡Gracias por tu compra!");
-          carrito = [];
-          carritoRef.set(carrito);
-        } else {
-          alert("Tu carrito está vacío.");
-        }
-      }
 
       const modal = document.getElementById("adminModal");
       const botonAdmin = document.getElementById("botonAdmin");
@@ -314,15 +242,31 @@
         if (imagen) {
           const reader = new FileReader();
           reader.onloadend = function () {
-            const nuevoProducto = {
-              nombre, precio, categoria, imagen: reader.result
-            };
-            agregarProducto(nuevoProducto);
+            const nuevoProducto = { nombre, precio, categoria, imagen: reader.result };
+            productos.push(nuevoProducto);
+            productosRef.set(productos);
           };
           reader.readAsDataURL(imagen);
         }
 
         this.reset();
+      });
+
+      productosRef.on('value', (snapshot) => {
+        productos = snapshot.val() || [];
+        actualizarVista();
+      });
+
+      carritoRef.on('value', (snapshot) => {
+        carrito = snapshot.val() || [];
+        actualizarCarrito();
+      });
+
+      logoRef.on('value', (snapshot) => {
+        const logoUrl = snapshot.val();
+        if (logoUrl) {
+          document.getElementById("company-logo").src = logoUrl;
+        }
       });
 
       function actualizarVista() {
@@ -334,7 +278,8 @@
           ? productos
           : productos.filter(p => p.categoria === categoriaSeleccionada);
 
-        productosFiltrados.forEach((producto, index) => {
+        productosFiltrados.forEach((producto) => {
+          const indexReal = productos.indexOf(producto);
           const tarjeta = document.createElement("div");
           tarjeta.className = "producto-tarjeta";
           tarjeta.innerHTML = `
@@ -344,14 +289,14 @@
             <div class="producto-categoria">${producto.categoria}</div>
             <button class="producto-boton">🛒</button>
           `;
-          tarjeta.querySelector(".producto-boton").onclick = () => agregarAlCarrito(productos.indexOf(producto));
+          tarjeta.querySelector(".producto-boton").onclick = () => agregarAlCarrito(indexReal);
           productosContainer.appendChild(tarjeta);
         });
 
         productos.forEach((producto, index) => {
-          const tarjetaAdmin = document.createElement("div");
-          tarjetaAdmin.className = "producto-tarjeta";
-          tarjetaAdmin.innerHTML = `
+          const tarjeta = document.createElement("div");
+          tarjeta.className = "producto-tarjeta";
+          tarjeta.innerHTML = `
             <img src="${producto.imagen}" class="producto-imagen">
             <input class="input-edit" type="text" value="${producto.nombre}" onchange="editarProducto(${index}, 'nombre', this.value)">
             <input class="input-edit" type="number" value="${producto.precio}" onchange="editarProducto(${index}, 'precio', this.value)">
@@ -359,13 +304,13 @@
             <input class="input-edit" type="file" accept="image/*" onchange="editarImagen(${index}, this)">
             <button class="admin-button" onclick="eliminarProducto(${index})">Eliminar</button>
           `;
-          productosAgregados.appendChild(tarjetaAdmin);
+          productosAgregados.appendChild(tarjeta);
         });
       }
 
       function actualizarBotonesCategorias() {
         const categorias = ["todas", ...new Set(productos.map(p => p.categoria))];
-        categoriasContainer.innerHTML = categorias.map(cat => 
+        categoriasContainer.innerHTML = categorias.map(cat =>
           <button class="categoria-boton" onclick="filtrarCategoria('${cat}')">${cat}</button>).join('');
       }
 
@@ -380,9 +325,59 @@
         document.getElementById("total").textContent = total.toFixed(2);
       }
 
-      function filtrarCategoria(categoria) {
+      window.filtrarCategoria = function (categoria) {
         categoriaSeleccionada = categoria;
         actualizarVista();
+      }
+
+      window.agregarAlCarrito = function (index) {
+        carrito.push(productos[index]);
+        carritoRef.set(carrito);
+      }
+
+      window.eliminarProducto = function (index) {
+        productos.splice(index, 1);
+        productosRef.set(productos);
+      }
+
+      window.editarProducto = function (index, campo, valor) {
+        productos[index][campo] = valor;
+        productosRef.set(productos);
+      }
+
+      window.editarImagen = function (index, input) {
+        const file = input.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            productos[index].imagen = reader.result;
+            productosRef.set(productos);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      window.cambiarLogo = function () {
+        const input = document.getElementById("logoInput").files[0];
+        if (input) {
+          const reader = new FileReader();
+          reader.onloadend = function () {
+            const logoUrl = reader.result;
+            document.getElementById("company-logo").src = logoUrl;
+            logoRef.set(logoUrl);
+          };
+          reader.readAsDataURL(input);
+        }
+      }
+
+      window.comprar = function () {
+        if (carrito.length) {
+          alert("¡Gracias por tu compra!");
+          carrito = [];
+          carritoRef.set(carrito);
+        } else {
+          alert("Tu carrito está vacío.");
+        }
       }
     });
   </script>
